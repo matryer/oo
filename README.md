@@ -7,9 +7,22 @@
   * Easy class definition
   * Use the `new` operator
   * Constructors with the `init` method
+  * Get the type with `.$kind`
   * Inheritance
   * Mix-ins
   * Full test suite
+
+## Using `oo`
+
+In your HTML page, just include a `script` tag for the appropriate version:
+
+### Latest edge version (not recommended) 
+
+    <script src="https://raw.github.com/stretchrcom/oo/master/src/oo-edge.js"></script>
+
+### Specific version
+
+  * v0.1 - `<script src=""></script>`
 
 ## Examples
 
@@ -36,6 +49,33 @@
       }
 
     });
+
+### Get the type with `.$kind`
+
+    var MyClass1 = oo.Class("MyClass1", {
+      numberOnOne: function(){ return 1; } 
+    });
+    var MyClass2 = oo.Class("MyClass2", {
+      numberOnTwo: function(){ return 2; } 
+    });
+    
+    function getNumber(object) {
+      switch (object.$kind) {
+        case MyClass1:
+          return object.numberOnOne();
+        case MyClass2:
+          return object.numberOnTwo();
+      }
+    }
+
+    var i1 = new MyClass1();
+    var i2 = new MyClass2();
+
+    alert( getNumber(i1) );
+    // alerts "1"
+
+    alert( getNumber(i2) );
+    // alerts "2"
 
 ### Base classes
 
