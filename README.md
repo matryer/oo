@@ -16,7 +16,7 @@
 
 In your HTML page, just include a `script` tag for the appropriate version:
 
-### Latest edge version (not recommended) 
+### Latest edge version
 
     <script src="https://raw.github.com/stretchrcom/oo/master/src/oo-edge.js"></script>
 
@@ -24,6 +24,10 @@ In your HTML page, just include a `script` tag for the appropriate version:
 
   * v0.1 - Minified - `<script src="https://raw.github.com/stretchrcom/oo/master/release/v0.1/oo-min.js"></script>`
   * v0.1 - Normal - `<script src="https://raw.github.com/stretchrcom/oo/master/release/v0.1/oo.js"></script>`
+
+### Other versions
+
+If you want the features from a specific branch, navigate to the branch on https://github.com/stretchrcom/oo/branches and look for the `Raw` file `/src/oo-edge.js`, and set that as your `src` attribute.
 
 ## Examples
 
