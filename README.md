@@ -18,7 +18,7 @@ In your HTML page, just include a `script` tag for the appropriate version:
 
 ### Latest edge version
 
-    <script src="https://raw.github.com/stretchrcom/oo/master/src/oo-edge.js"></script>
+    <script src="https://raw.github.com/stretchrcom/oo/master/src/oo.js"></script>
 
 ### Specific version
 
