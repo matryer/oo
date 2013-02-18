@@ -22,8 +22,7 @@ In your HTML page, just include a `script` tag for the appropriate version:
 
 ### Specific version
 
-  * v0.1 - Minified - `<script src="https://raw.github.com/stretchrcom/oo/master/release/v0.1/oo-min.js"></script>`
-  * v0.1 - Normal - `<script src="https://raw.github.com/stretchrcom/oo/master/release/v0.1/oo.js"></script>`
+  * v0.2 - Normal - `<script src="https://github.com/stretchrcom/oo/blob/v0.2/src/oo.js"></script>`
 
 ### Other versions
 
