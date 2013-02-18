@@ -1,10 +1,12 @@
 /*
 
   oo
-  
   The worlds simplest JavaScript OO implementation.
-
   For if you just need classes, and nothing else.
+
+  Copyright (c) 2013 Mat Ryer
+  Please consider promoting this project if you find it useful.
+  Be sure to check out the Licence: https://github.com/stretchrcom/oo#licence
 
   ---
 
@@ -24,14 +26,6 @@
 
       var helloToMat = new SayHelloClass("Mat");
       helloToMat.sayHello();
-
-  ---
-
-  Copyright (c) 2013 Mat Ryer
-
-  Please consider promoting this project if you find it useful.
-
-  Be sure to check out the Licence: https://github.com/stretchrcom/oo#licence
 
 */
 
@@ -66,7 +60,6 @@ var ooreset = function() {
       // <debug>
       // ensure this is a unique class name
       if (oo.classesmap[className]) {
-        //console.info(className + " exists.")
         throw new oo.DuplicateClassNameException(className);
         return null;
       }
