@@ -4,6 +4,14 @@
 
 ## Features
 
+  * Easy class definition
+  * Use the `new` operator
+  * Constructors with the `init` method
+  * Inheritance
+  * Mix-ins
+
+## Examples
+
 ### Easy class definition
 
     var MyClass = oo.Class("MyClass", {
@@ -133,11 +141,11 @@
     alert( i.theMethod() );
     // alerts "CHILD method working with Mat"
 
-	alert( i.helloFromBase1() );
-	// alerts "Hello from Base 1"
+	  alert( i.helloFromBase1() );
+	  // alerts "Hello from Base 1"
 	
-	alert( i.helloFromBase2() );
-	// alerts "Hello from Base 2"
+	  alert( i.helloFromBase2() );
+	  // alerts "Hello from Base 2"
 
     alert( i.BaseClass1.theMethod() );
     // alerts "BASE 1 method working with Mat"
