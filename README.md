@@ -26,7 +26,7 @@ In your HTML page, just include a `script` tag for the appropriate version:
 
 ### Other versions
 
-If you want the features from a specific branch, navigate to the branch on https://github.com/stretchrcom/oo/branches and look for the `Raw` file `/src/oo-edge.js`, and set that as your `src` attribute.
+If you want the features from a specific branch, navigate to the branch on https://github.com/stretchrcom/oo/branches and look for the raw file `/src/oo.js`, and set that as your `src` attribute.
 
 ## Examples
 
