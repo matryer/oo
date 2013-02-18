@@ -1,4 +1,16 @@
-// reset makes the initial oo object.
+/*
+
+  tinyoo
+  
+
+*/
+
+// ooreset makes the initial oo object.
+//
+// This can be useful for testing:
+//
+//     oo = ooreset();
+//
 var ooreset = function() {
   var oo = {
 
