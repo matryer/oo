@@ -1,6 +1,6 @@
-# tinyoo
+# oo - Objects for JavaScript
 
-`tinyoo` is the worlds simplest yet most powerful JavaScript OO implementation.  Extracted from [Objx JavaScript Enhancement library](http://objx.googlecode.com/).
+`oo` is the worlds simplest yet most powerful JavaScript OO implementation.  Extracted from [Objx JavaScript Enhancement library](http://objx.googlecode.com/).
 
 ## Features
 

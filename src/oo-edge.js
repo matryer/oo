@@ -1,7 +1,8 @@
 /*
 
-  tinyoo
+  oo
   
+  The worlds simplest JavaScript OO implementation.
 
 */
 
