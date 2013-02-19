@@ -14,7 +14,7 @@
 
 ## Using `oo`
 
-In your HTML page, just include a `script` tag for the appropriate version:
+In your HTML page, just include a `script` tag for the appropriate version.
 
 ### Latest edge version
 
