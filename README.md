@@ -4,7 +4,7 @@
 
 ## Features
 
-  * Easy class definition
+  * [Easy class definition](#easy-class-definition)
   * Use the `new` operator
   * Constructors with the `init` method
   * Get the type with `.$kind`
