@@ -28,6 +28,10 @@ In your HTML page, just include a `script` tag for the appropriate version.
 
 If you want the features from a specific branch, navigate to the branch on https://github.com/stretchrcom/oo/branches and look for the raw file `/src/oo.js`, and set that as your `src` attribute.
 
+### Host it yourself
+
+You are free to copy the source and host it on your own servers if you leave the comments in place.  See the [licence](https://github.com/stretchrcom/oo#licence) for more information.
+
 ## Examples
 
 ### Easy class definition
