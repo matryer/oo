@@ -32,6 +32,14 @@ If you want the features from a specific branch, navigate to the branch on https
 
 ### Easy class definition
 
+To define a class, just use the `oo.Class` method:
+
+    oo.Class("{ClassName}", [BaseClasses], [Mixins], [Definition]);
+
+  * The first argument must be the class name, usually the same name as the variable you assign it to.
+  * The final argument will be the definition of the class.  It is optional but usually needed.
+  * Base classes and mixins can be passed after the class name (first argument) and before the definition (final argument), and they will contribute to the blueprint of the class.
+
     var MyClass = oo.Class("MyClass", {
     
       getName: function() {
@@ -42,9 +50,39 @@ If you want the features from a specific branch, navigate to the branch on https
 
 ### Use the `new` operator
 
+Like normal classes in JavaScript (and other languages), you may use the `new` keyword to instantiate your classes.
+
     var myInstance = new MyClass();
 
+### Methods are just functions that refer to `this`
+
+The `this` object is a special keyword that refers to the instance of the class in which the code is run:
+
+    var MyClass = oo.Class("MyClass", {
+
+      methodThatGetsTheNameField: function() {
+        return this.name;
+      }
+
+    });
+
+In the above snippet, `this` will refer to different objects depending on which one the function is called for.  In the following code, two separate instances of `MyClass` are given different `name` values, and while the same method (`methodThatGetsTheNameField`) is called, the return is different:
+
+    var myClassInstance1 = new MyClass();
+    var myClassInstance2 = new MyClass();
+
+    myClassInstance1.name = "One";
+    myClassInstance2.name = "Two";
+
+    myClassInstance1.methodThatGetsTheNameField()
+    // returns "One"
+
+    myClassInstance2.methodThatGetsTheNameField()
+    // returns "Two"
+
 ### Constructors with the `init` method
+
+The special `init` function will be called each time a new instance is created, and allows you to perform initialization activities for the class.
 
     var MyClass = oo.Class("MyClass", {
     
@@ -55,6 +93,8 @@ If you want the features from a specific branch, navigate to the branch on https
     });
 
 ### Get the type with `.$kind`
+
+The `.$kind` field contains the class that was used to create the object.
 
     var MyClass1 = oo.Class("MyClass1", {
       numberOnOne: function(){ return 1; } 
@@ -83,6 +123,8 @@ If you want the features from a specific branch, navigate to the branch on https
 
 ### Base classes
 
+Inheritance allows you to build general functionality that can then be specialized.  For more information, see the [inheritance article on Wikipedia](http://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming).
+
     var BaseClass = oo.Class("BaseClass", {
       baseMethod: function() {
         return 123;
@@ -104,6 +146,8 @@ If you want the features from a specific branch, navigate to the branch on https
     // alerts "123"
 
 ### Mix-ins
+
+Mix-ins are usually dumber than full base classes, but can be any kind of JavaScript object that has functions worth reusing.  In the following example, the `LovelyMethods` object is _mixed in_ to the class definition.  Notice how the `getName` method becomes available to instances of `MyClass`.
 
     var LovelyMethods = {
 
@@ -131,6 +175,8 @@ If you want the features from a specific branch, navigate to the branch on https
 
 ### Accessing overridden base methods
 
+If a child class overrides a method in the base class, you may still access the base class method using `instance.{BaseClassKind}.{method}` pattern.
+
     var BaseClass = oo.Class("BaseClass", {
       theMethod: function() {
         return "BASE method working with " + this.name;
@@ -139,7 +185,13 @@ If you want the features from a specific branch, navigate to the branch on https
 
     var ChildClass = oo.Class("ChildClass", BaseClass, {
       theMethod: function() {
-        return "CHILD method working with " + this.name;
+
+        // call the base version
+        var t = this.BaseClass.theMethod();
+
+        // make a change
+        return t.replace("BASE", "CHILD");
+
       }
     });
 
@@ -154,6 +206,8 @@ If you want the features from a specific branch, navigate to the branch on https
     // alerts "BASE method working with Mat"
 
 ### Multiple base classes
+
+One class may have multiple base classes, but each base class will share the instance memory.  Any clashes in method names can be resolved by using the `instance.{BaseClassKind}.{method}` pattern.
 
     var BaseClass1 = oo.Class("BaseClass1", {
       theMethod: function() {
@@ -197,6 +251,28 @@ If you want the features from a specific branch, navigate to the branch on https
     
     alert( i.BaseClass2.theMethod() );
     // alerts "BASE 2 method working with Mat"
+
+## Helper methods
+
+`oo` provides some additional helpful methods.
+
+### `ooextend`
+
+    ooextend(source, destination)
+
+The `ooextend` method copies properties from `source` into `destination`.  The `destination` object is modified.
+
+### `oobind`
+
+    var newFunc = oobind({function}, {thisObject}, [{arg1}, [{arg2...}]])
+
+or
+
+    var newFunc = {function}.bind({thisObject}, [{arg1}, [{arg2...}]])
+
+The `oobind` method allows you to bind context (and arguments) to functions.  This is used by `oo.Class` internally, but can be invaliable when coding JavaScript.
+
+NOTE: Newer editions of the language has its own [bind method](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind) that will eventually replace `oobind`.  It works, however, in the same way.
 
 ## Licence
     
