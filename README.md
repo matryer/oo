@@ -45,6 +45,8 @@ To define a class, just use the `oo.Class` method:
   * The final argument will be the definition of the class.  It is optional but usually needed.
   * Base classes and mixins can be passed after the class name (first argument) and before the definition (final argument), and they will contribute to the blueprint of the class.
 
+For example:
+
     var MyClass = oo.Class("MyClass", {
     
       getName: function() {
