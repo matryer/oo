@@ -272,7 +272,7 @@ or
 
 The `oobind` method allows you to bind context (and arguments) to functions.  This is used by `oo.Class` internally, but can be invaliable when coding JavaScript.
 
-NOTE: Newer editions of the language has its own [bind method](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind) that will eventually replace `oobind`.  It works, however, in the same way.
+NOTE: Newer editions of the language have their own [bind method](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind) that will eventually replace `oobind`.  It works, however, in the same way.
 
 ## Licence
     
