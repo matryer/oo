@@ -5,34 +5,35 @@
 ## Features
 
   * [Easy class definition](#easy-class-definition)
-  * Use the `new` operator
-  * Constructors with the `init` method
-  * Get the type with `.$kind`
-  * Inheritance
-  * Mix-ins
+  * Use the [`new` keyword](#use-the-new-operator) and [`this` keyword](#methods-are-just-functions-that-refer-to-this)
+  * [Constructors with the `init` method](#constructors-with-the-init-method)
+  * [Get the type with `.$kind`](#get-the-type-with-kind)
+  * [Base classes](#base-classes) and [inheritance](#advanced-inheritance)
+  * [Mix-ins](#mix-ins)
+  * Helpful supporting methods like; [ooextend](#ooextend) and [oobind](#oobind).
   * Full test suite
 
 ## Using `oo`
 
-In your HTML page, just include a `script` tag for the appropriate version.
+In your HTML page, just include a `script` tag for the appropriate version hosted on GitHub:
 
-### Latest edge version
+#### Latest edge version
 
     <script src="https://raw.github.com/stretchrcom/oo/master/src/oo.js"></script>
 
-### Specific version
+#### Specific version
 
-  * v0.2 - Normal - `<script src="https://raw.github.com/stretchrcom/oo/v0.2/src/oo.js"></script>`
+  * v0.2 - `<script src="https://raw.github.com/stretchrcom/oo/v0.2/src/oo.js"></script>`
 
-### Other versions
+#### Other versions
 
 If you want the features from a specific branch, navigate to the branch on https://github.com/stretchrcom/oo/branches and look for the raw file `/src/oo.js`, and set that as your `src` attribute.
 
-### Host it yourself
+#### Host it yourself
 
 You are free to copy the source and host it on your own servers if you leave the comments in place.  See the [licence](https://github.com/stretchrcom/oo#licence) for more information.
 
-## Examples
+## API Documentation
 
 ### Easy class definition
 
