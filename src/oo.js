@@ -1,6 +1,8 @@
 /*
 
   oo
+  v1.0
+  
   The worlds simplest JavaScript OO implementation.
   For if you just need classes, and nothing else.
 
@@ -37,6 +39,9 @@
 //
 var ooreset = function() {
   var oo = {
+
+    // the oo version number
+    version: "1.0",
 
     // oo.classes holds an array of all known class names.
     classes: [],
