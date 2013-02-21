@@ -26,7 +26,7 @@ In your HTML page, just include a `script` tag for the appropriate version hoste
 ##### v1.0
 
   * `<script src="https://raw.github.com/stretchrcom/oo/v0.2/src/oo.js"></script>`
-  * Minified: `<script src="https://raw.github.com/stretchrcom/oo/v1.0/src/oo-min.js"></script>`
+  * Minified (2,162 bytes): `<script src="https://raw.github.com/stretchrcom/oo/v1.0/src/oo-min.js"></script>`
 
 #### Other versions
 
