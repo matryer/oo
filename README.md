@@ -43,6 +43,10 @@ You are free to copy the source and host it on your own servers if you leave the
 
 ## API Documentation
 
+### Tips
+
+  * Class and instance methods starting with `$` are reserved for internal use and should be avoided.  Of course you are free to use them if you have to, but you may find things clashing.
+
 ### Easy class definition
 
 To define a class, just use the `oo.Class` method:
