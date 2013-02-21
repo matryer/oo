@@ -21,9 +21,12 @@ In your HTML page, just include a `script` tag for the appropriate version hoste
 
     <script src="https://raw.github.com/stretchrcom/oo/master/src/oo.js"></script>
 
-#### Specific version
+#### Specific releases
 
-  * v0.2 - `<script src="https://raw.github.com/stretchrcom/oo/v0.2/src/oo.js"></script>`
+##### v1.0
+
+  * `<script src="https://raw.github.com/stretchrcom/oo/v0.2/src/oo.js"></script>`
+  * Minified: `<script src="https://raw.github.com/stretchrcom/oo/v1.0/src/oo-min.js"></script>`
 
 #### Other versions
 
