@@ -51,6 +51,18 @@ buster.testCase("Class", {
 
   },
 
+  "oo.Class class methods": function(){
+
+    var MyClass = oo.Class("MyClass", {
+      $getName: function(){ return this._name; }
+    });
+
+    MyClass._name = "A class name";
+
+    assert.equals(MyClass.$getName(), "A class name");
+
+  },
+
   "oo.Class with existing class name should throw error": function() {
 
     oo.Class("MyClass", {});

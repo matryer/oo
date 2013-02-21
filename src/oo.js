@@ -108,6 +108,14 @@ var ooreset = function() {
 
         var item = arguments[i];
 
+        // does this object have a $beforeInherited method?
+        if (item.$beforeInherited) {
+          item = item.$beforeInherited(klass, arguments);
+        }
+
+        // skip if we have nothing
+        if (!item) continue;
+
         // is this a base class?
         if (item.$isClass) {
           
@@ -128,11 +136,32 @@ var ooreset = function() {
 
         }
 
+        // does this object have an $afterInherited method?
+        if (item.$afterInherited) {
+          item.$afterInherited(klass, arguments);
+        }
+
       }
 
       // setup the definition
       if (arguments.length > 1) {
-        ooextend(arguments[arguments.length-1], klass.prototype);
+
+        var definition = arguments[arguments.length-1];
+        for (var property in definition) {
+
+          // is this a class or instance item?
+          if (property.substr(0, 1) == "$") {
+
+            klass[property] = definition[property];
+
+          } else {
+
+            klass.prototype[property] = definition[property];
+
+          }
+
+        }
+
       }
 
       // set a nice toString for lovely debugging
@@ -171,8 +200,7 @@ var ooreset = function() {
   // DuplicateClassNameException 
   oo.DuplicateClassNameException = oo.Class("oo.DuplicateClassNameException", oo.Exception, {
     init: function(className) {
-      // TODO: call base class
-      "Cannot define a class because '" + className + "' already exists."
+      this["oo.Exception"].init("Cannot define a class because '" + className + "' already exists, consider namespacing your class names; e.g. YourCompany." + className);
     }
   });
 
