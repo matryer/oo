@@ -33,6 +33,11 @@ If you want the features from a specific branch, navigate to the branch on https
 
 You are free to copy the source and host it on your own servers if you leave the comments in place.  See the [licence](https://github.com/stretchrcom/oo#licence) for more information.
 
+### Change log
+
+  * v1.0 - Initial release
+  * v0.2 - BETA release
+
 ## API Documentation
 
 ### Easy class definition
