@@ -103,12 +103,14 @@ var ooreset = function() {
 
       };
 
+      var afterClassDefinedList = [];
+
       // handle bass classes and mixins
       for (var i = 1, l = arguments.length - 1; i < l; i++) {
 
         var item = arguments[i];
 
-        // does this object have a $beforeInherited method?
+        // handle $beforeInherited method
         if (item.$beforeInherited) {
           item = item.$beforeInherited(klass, arguments);
         }
@@ -136,9 +138,14 @@ var ooreset = function() {
 
         }
 
-        // does this object have an $afterInherited method?
+        // handle the $afterInherited method
         if (item.$afterInherited) {
           item.$afterInherited(klass, arguments);
+        }
+
+        // handle the $afterInherited method
+        if (item.$afterClassDefined) {
+          afterClassDefinedList.push(item.$afterClassDefined.bind(item, klass, arguments))
         }
 
       }
@@ -176,8 +183,18 @@ var ooreset = function() {
       // set the class name
       oo.classes[oo.classes.length] = klass.$className = className;
 
-      // add the class to the classmap and return the class
-      return oo.classesmap[className] = klass;
+      // add the class to the classmap 
+      oo.classesmap[className] = klass;
+
+      // call any $afterClassDefined functions
+      if (afterClassDefinedList.length > 0) {
+        for (var i in afterClassDefinedList) {
+          afterClassDefinedList[i]();
+        }
+      }
+
+      // and return the class
+      return klass;
 
     }
 
