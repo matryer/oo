@@ -40,6 +40,7 @@ You are free to copy the source and host it on your own servers if you leave the
 
 ### Change log
 
+  * Edge - Added [special class methods](#special-class-methods)
   * v1.0 - Initial release
   * v0.2 - BETA release
 

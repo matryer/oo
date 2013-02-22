@@ -41,7 +41,7 @@ var ooreset = function() {
   var oo = {
 
     // the oo version number
-    version: "1.0",
+    version: "1.1",
 
     // oo.classes holds an array of all known class names.
     classes: [],
