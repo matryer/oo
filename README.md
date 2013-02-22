@@ -318,18 +318,42 @@ One class may have multiple base classes, but each base class will share the ins
 
 ### $beforeInherited
 
-    (item) $beforeInherited(className, [mixins and base class arguments], definition);
+    (item) $beforeInherited(newClass, argumentsArray);
 
 The `$beforeInherited` method is called just before a class gets inherited.
 
   * `this` will be the class itself
-  * `className` is the name of the class being defined (i.e. the subclass of this one).
-  * `definition` will always be the last argument.  This is the definition of the new class.
-  * The `item` return value will the os.Class or object that gets inherited into the new class.
+  * `newClass` is the new class that is being defined.
+  * `argumentsArray` is an array of the arguments that were passed to `oo.Class`.
+    * [0] - Class name string.
+    * [n...] - Middle arguments will be base classes and mixins.
+    * [len-1] - The last argument will be the definition of the class.
 
 ### $afterInherited
 
-... TODO ...
+    $afterInherited(newClass, argumentsArray)
+
+The `$afterInherited` method is called after the class has been inherited.
+
+  * `this` will be the class itself
+  * `newClass` is the new class that is being defined.
+  * `argumentsArray` is an array of the arguments that were passed to `oo.Class`.
+    * [0] - Class name string.
+    * [n...] - Middle arguments will be base classes and mixins.
+    * [len-1] - The last argument will be the definition of the class.
+
+### $afterClassDefined
+
+    $afterClassDefined(newClass, argumentsArray)
+
+The `$afterClassDefined` method is called after a new class has been compeltely defined.  I.e. mixins and base classes that appear after this class in the `oo.Class` method will have all been handled before this method is called.
+
+  * `this` will be the class itself
+  * `newClass` is the compelte new class that has been defined.
+  * `argumentsArray` is an array of the arguments that were passed to `oo.Class`.
+    * [0] - Class name string.
+    * [n...] - Middle arguments will be base classes and mixins.
+    * [len-1] - The last argument will be the definition of the class.
 
 ## Helper methods
 
