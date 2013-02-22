@@ -11,6 +11,7 @@
   * [Check for classes with `.$isClass` and get it with `.$class`](#Check-for-classes-with-isClass-and-get-it-with-class`)
   * [Base classes](#base-classes) and [inheritance](#advanced-inheritance)
   * [Mix-ins](#mix-ins)
+  * [Special class methods](#special-class-methods) let you write advanced OO capabilities.
   * Helpful supporting methods like; [ooextend](#ooextend) and [oobind](#oobind).
   * Full test suite
 
