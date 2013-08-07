@@ -41,7 +41,7 @@ var ooreset = function() {
   var oo = {
 
     // the oo version number
-    version: "1.0",
+    version: "1.1",
 
     // oo.classes holds an array of all known class names.
     classes: [],
@@ -103,10 +103,20 @@ var ooreset = function() {
 
       };
 
+      var afterClassDefinedList = [];
+
       // handle bass classes and mixins
       for (var i = 1, l = arguments.length - 1; i < l; i++) {
 
         var item = arguments[i];
+
+        // handle $beforeInherited method
+        if (item.$beforeInherited) {
+          item = item.$beforeInherited(klass, arguments);
+        }
+
+        // skip if we have nothing
+        if (!item) continue;
 
         // is this a base class?
         if (item.$isClass) {
@@ -128,11 +138,37 @@ var ooreset = function() {
 
         }
 
+        // handle the $afterInherited method
+        if (item.$afterInherited) {
+          item.$afterInherited(klass, arguments);
+        }
+
+        // handle the $afterInherited method
+        if (item.$afterClassDefined) {
+          afterClassDefinedList.push(item.$afterClassDefined.bind(item, klass, arguments))
+        }
+
       }
 
       // setup the definition
       if (arguments.length > 1) {
-        ooextend(arguments[arguments.length-1], klass.prototype);
+
+        var definition = arguments[arguments.length-1];
+        for (var property in definition) {
+
+          // is this a class or instance item?
+          if (property.substr(0, 1) == "$") {
+
+            klass[property] = definition[property];
+
+          } else {
+
+            klass.prototype[property] = definition[property];
+
+          }
+
+        }
+
       }
 
       // set a nice toString for lovely debugging
@@ -147,8 +183,18 @@ var ooreset = function() {
       // set the class name
       oo.classes[oo.classes.length] = klass.$className = className;
 
-      // add the class to the classmap and return the class
-      return oo.classesmap[className] = klass;
+      // add the class to the classmap 
+      oo.classesmap[className] = klass;
+
+      // call any $afterClassDefined functions
+      if (afterClassDefinedList.length > 0) {
+        for (var i in afterClassDefinedList) {
+          afterClassDefinedList[i]();
+        }
+      }
+
+      // and return the class
+      return klass;
 
     }
 
@@ -171,8 +217,7 @@ var ooreset = function() {
   // DuplicateClassNameException 
   oo.DuplicateClassNameException = oo.Class("oo.DuplicateClassNameException", oo.Exception, {
     init: function(className) {
-      // TODO: call base class
-      "Cannot define a class because '" + className + "' already exists."
+      this["oo.Exception"].init("Cannot define a class because '" + className + "' already exists, consider namespacing your class names; e.g. YourCompany." + className);
     }
   });
 

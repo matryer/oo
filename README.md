@@ -7,9 +7,11 @@
   * [Easy class definition](#easy-class-definition)
   * Use the [`new` keyword](#use-the-new-operator) and [`this` keyword](#methods-are-just-functions-that-refer-to-this)
   * [Constructors with the `init` method](#constructors-with-the-init-method)
-  * [Get the type with `.$kind`](#get-the-type-with-kind)
+  * [Class and static methods](#Class-methods)
+  * [Check for classes with `.$isClass` and get it with `.$class`](#Check-for-classes-with-isClass-and-get-it-with-class`)
   * [Base classes](#base-classes) and [inheritance](#advanced-inheritance)
   * [Mix-ins](#mix-ins)
+  * [Special class methods](#special-class-methods) let you write advanced OO capabilities.
   * Helpful supporting methods like; [ooextend](#ooextend) and [oobind](#oobind).
   * Full test suite
 
@@ -38,6 +40,7 @@ You are free to copy the source and host it on your own servers if you leave the
 
 ### Change log
 
+  * Edge - Added [special class methods](#special-class-methods)
   * v1.0 - Initial release
   * v0.2 - BETA release
 
@@ -113,6 +116,22 @@ In the above snippet, `this` will refer to different objects depending on which 
     myClassInstance2.methodThatGetsTheNameField()
     // returns "Two"
 
+### Class methods
+
+Methods beginning with `$` will not become instance methods (i.e. bound to instances of the class), but will become static class methods on the class itself.
+
+    var MyClass = oo.Class("MyClass", {
+      $alert: function(message){
+        alert(message);
+      }
+    });
+
+    MyClass.$alert("Hello");
+    // alerts "Hello"
+
+    var instance = new MyClass();
+    instance.$alert(); // fails
+
 ### Constructors with the `init` method
 
 The special `init` function will be called each time a new instance is created, and allows you to perform initialization activities for the class.
@@ -125,9 +144,17 @@ The special `init` function will be called each time a new instance is created, 
 
     });
 
-### Get the type with `.$kind`
+### Check for classes with `.$isClass` and get it with `.$class`
 
-The `.$kind` field contains the class that was used to create the object.
+To see if an object is an `oo.Class`, just do this:
+
+    if (object.$isClass) {
+      // the object IS an oo Class
+    } else {
+      // it is not
+    }
+
+The `.$class` field contains the class that was used to create the object.
 
     var MyClass1 = oo.Class("MyClass1", {
       numberOnOne: function(){ return 1; } 
@@ -137,7 +164,7 @@ The `.$kind` field contains the class that was used to create the object.
     });
     
     function getNumber(object) {
-      switch (object.$kind) {
+      switch (object.$class) {
         case MyClass1:
           return object.numberOnOne();
         case MyClass2:
@@ -153,6 +180,10 @@ The `.$kind` field contains the class that was used to create the object.
 
     alert( getNumber(i2) );
     // alerts "2"
+
+You can actually create new instances of any object like this:
+
+    var newObject = new existingObject.$class();
 
 ### Base classes
 
@@ -284,6 +315,47 @@ One class may have multiple base classes, but each base class will share the ins
     
     alert( i.BaseClass2.theMethod() );
     // alerts "BASE 2 method working with Mat"
+
+## Special class methods
+
+### $beforeInherited
+
+    (item) $beforeInherited(newClass, argumentsArray);
+
+The `$beforeInherited` method is called just before a class gets inherited.
+
+  * `this` will be the class itself
+  * `newClass` is the new class that is being defined.
+  * `argumentsArray` is an array of the arguments that were passed to `oo.Class`.
+    * [0] - Class name string.
+    * [n...] - Middle arguments will be base classes and mixins.
+    * [len-1] - The last argument will be the definition of the class.
+
+### $afterInherited
+
+    $afterInherited(newClass, argumentsArray)
+
+The `$afterInherited` method is called after the class has been inherited.
+
+  * `this` will be the class itself
+  * `newClass` is the new class that is being defined.
+  * `argumentsArray` is an array of the arguments that were passed to `oo.Class`.
+    * [0] - Class name string.
+    * [n...] - Middle arguments will be base classes and mixins.
+    * [len-1] - The last argument will be the definition of the class.
+
+### $afterClassDefined
+
+    $afterClassDefined(newClass, argumentsArray)
+
+The `$afterClassDefined` method is called after a new class has been compeltely defined.  I.e. mixins and base classes that appear after this class in the `oo.Class` method will have all been handled before this method is called.
+
+  * `this` will be the class itself
+  * `newClass` is the compelte new class that has been defined.
+  * `argumentsArray` is an array of the arguments that were passed to `oo.Class`.
+    * [0] - Class name string.
+    * [n...] - Middle arguments will be base classes and mixins.
+    * [len-1] - The last argument will be the definition of the class.
 
 ## Helper methods
 
