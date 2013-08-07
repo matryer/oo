@@ -250,11 +250,7 @@ var ooreset = function() {
         }
       };
 
-      // obj.event(function)
-      // -> adds a callback
-      //
-      // obj.event(!function)
-      // -> fires event
+      // obj.eventName() fires the event
       target[name] = function(){
 
         // add the target (this) object as the first argument
@@ -264,14 +260,23 @@ var ooreset = function() {
         return this;
 
       };
+
+      // on adds a callback
       target[name].on = function(){
 
         var args = [this];
         ooextend(arguments, args);
         onFunc.apply(null, args);
         return this;
-        
+
       };
+
+      // remove removes a callback
+      target[name].remove = function(callback) {
+
+        // TODO:
+
+      }
 
     }
 

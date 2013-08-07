@@ -86,6 +86,36 @@ buster.testCase("Events", {
     assert.equals(2, callbacks[1]);
     assert.equals(3, callbacks[2]);
 
+  },
+
+  "Removing callbacks": function(){
+
+    var callbacks = [];
+    var cb1 = function(){
+      callbacks.push(1)
+    };
+    var cb2 = function(){
+      callbacks.push(2)
+    };
+    var cb3 = function(){
+      callbacks.push(3)
+    };
+
+    var o = new MyTestClass();
+
+    // bind multiple callbacks
+    o.success.on(cb1).on(cb2).on(cb3);
+
+    // remove the 2nd callback
+    o.success.remove(cb2);
+
+    // fire the event
+    o.success();
+
+    assert.equals(3, callbacks.length);
+    assert.equals(1, callbacks[0]);
+    assert.equals(3, callbacks[1]);
+
   }
 
 });
