@@ -41,7 +41,7 @@ var ooreset = function() {
   var oo = {
 
     // the oo version number
-    version: "1.1",
+    version: "1.2",
 
     // oo.classes holds an array of all known class names.
     classes: [],
@@ -72,6 +72,10 @@ var ooreset = function() {
 
       // make the class thing
       var klass = function(){
+
+        if (!this.$initialiseBases) {
+          throw new oo.IncorrectSyntaxException(className);
+        }
 
         // initialise bases
         this.$initialiseBases.apply(this);
@@ -156,14 +160,22 @@ var ooreset = function() {
         var definition = arguments[arguments.length-1];
         for (var property in definition) {
 
-          // is this a class or instance item?
-          if (property.substr(0, 1) == "$") {
+          // get the property
+          var theProperty = definition[property];
 
-            klass[property] = definition[property];
+          // is this an oo.Event?
+          if (theProperty && oo.Event && theProperty.$class == oo.Event) {
+            theProperty.configure(property, klass);
+          }
+
+          // is this a class or instance item?
+          if (property.substr(0, 1) === "$") {
+
+            klass[property] = theProperty;
 
           } else {
 
-            klass.prototype[property] = definition[property];
+            klass.prototype[property] = theProperty;
 
           }
 
@@ -201,6 +213,23 @@ var ooreset = function() {
   };
 
   /*
+    oo Events
+  */
+  oo.Event = oo.Class("oo.Event", {
+
+    // configure sets up the appropriate event methods
+    // on the target object.
+    configure: function(name, target) {
+      console.info(arguments)
+
+      // TODO: add the helper methods to the class
+      //       definition target.
+
+    }
+
+  });
+
+  /*
     oo Exceptions
   */
 
@@ -210,7 +239,7 @@ var ooreset = function() {
       this.message = message;
     },
     toString: function(){
-      return "<{ oo.Exception: \" + message + \" }>";
+      return "oo.Exception: \" + message + \"";
     }
   });
 
@@ -218,6 +247,13 @@ var ooreset = function() {
   oo.DuplicateClassNameException = oo.Class("oo.DuplicateClassNameException", oo.Exception, {
     init: function(className) {
       this["oo.Exception"].init("Cannot define a class because '" + className + "' already exists, consider namespacing your class names; e.g. YourCompany." + className);
+    }
+  });
+
+  // IncorrectSyntaxException
+  oo.IncorrectSyntaxException = oo.Class("oo.IncorrectSyntaxException", oo.Exception, {
+    init: function(className) {
+      this["oo.Exception"].init("Incorrect syntax when creating a new instance; don't just call the method, use the new keyword: var obj = new " + className + "();");
     }
   });
 
