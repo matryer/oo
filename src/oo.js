@@ -165,7 +165,7 @@ var ooreset = function() {
 
           // is this an oo.Event?
           if (theProperty && oo.Event && theProperty.$class == oo.Event) {
-            theProperty.configure(property, klass);
+            oo.Event.$configure(property, klass);
           }
 
           // is this a class or instance item?
@@ -219,8 +219,14 @@ var ooreset = function() {
 
     // configure sets up the appropriate event methods
     // on the target object.
-    configure: function(name, target) {
+    $configure: function(name, target) {
+
       console.info(arguments)
+
+      
+      target[name] = function(){
+
+      };
 
       // TODO: add the helper methods to the class
       //       definition target.
