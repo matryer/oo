@@ -22,6 +22,38 @@ buster.testCase("ooextend", {
 		assert.equals(obj1["four"], "FOUR");
 		assert.equals(obj1["five"], "FIVE");
 
+	},
+
+	"ooextend array": function() {
+
+		var arr1 = [1,2,3];
+		var arr2 = [4,5,6];
+
+		ooextend(arr2, arr1);
+
+		assert.equals(arr1[0], 1);
+		assert.equals(arr1[1], 2);
+		assert.equals(arr1[2], 3);
+		assert.equals(arr1[3], 4);
+		assert.equals(arr1[4], 5);
+		assert.equals(arr1[5], 6);
+
+	},
+
+	"ooextend arguments": function(){
+
+		var arr1 = [1,2,3];
+		(function(){
+			ooextend(arguments, arr1);
+		})(4,5,6);
+
+		assert.equals(arr1[0], 1);
+		assert.equals(arr1[1], 2);
+		assert.equals(arr1[2], 3);
+		assert.equals(arr1[3], 4);
+		assert.equals(arr1[4], 5);
+		assert.equals(arr1[5], 6);
+
 	}
 
 });

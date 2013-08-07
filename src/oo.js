@@ -165,17 +165,21 @@ var ooreset = function() {
 
           // is this an oo.Event?
           if (theProperty && oo.Event && theProperty.$class == oo.Event) {
-            oo.Event.$configure(property, klass);
-          }
 
-          // is this a class or instance item?
-          if (property.substr(0, 1) === "$") {
-
-            klass[property] = theProperty;
+            oo.Event.$configure(property, klass.prototype);
 
           } else {
 
-            klass.prototype[property] = theProperty;
+            // is this a class or instance item?
+            if (property.substr(0, 1) === "$") {
+
+              klass[property] = theProperty;
+
+            } else {
+
+              klass.prototype[property] = theProperty;
+
+            }
 
           }
 
@@ -221,15 +225,53 @@ var ooreset = function() {
     // on the target object.
     $configure: function(name, target) {
 
-      console.info(arguments)
-
-      
-      target[name] = function(){
-
+      // method to add callback
+      var onFunc = function(target, func) {
+        target.callbacks = target.callbacks || [];
+        target.callbacks.push(func);
       };
 
-      // TODO: add the helper methods to the class
-      //       definition target.
+      // method to fire callbacks
+      var fireFunc = function(target) {
+        if (target[name].callbacks) {
+
+          // build argument list
+          var args = [];
+          for (var argi in arguments) {
+            if (argi > 0) {
+              args.push(arguments[argi]);
+            }
+          }
+
+          for (var func in target[name].callbacks) {
+            target[name].callbacks[func].apply(target, args);
+          }
+
+        }
+      };
+
+      // obj.event(function)
+      // -> adds a callback
+      //
+      // obj.event(!function)
+      // -> fires event
+      target[name] = function(){
+
+        // add the target (this) object as the first argument
+        var args = [this];
+        ooextend(arguments, args);
+        fireFunc.apply(null, args);
+        return this;
+
+      };
+      target[name].on = function(){
+
+        var args = [this];
+        ooextend(arguments, args);
+        onFunc.apply(null, args);
+        return this;
+        
+      };
 
     }
 
@@ -268,10 +310,21 @@ var ooreset = function() {
 
 // ooextend simply copies properties from source into
 // destiantion.
-var ooextend = function(source, destination){
-  for (var s in source) {
-    destination[s] = source[s];
+var ooextend = function(source, destination) {
+
+  // is this an array?
+  if (typeof source.length != "undefined" && typeof destination.length != "undefined") {
+    // array
+    for (var s in source) {
+      destination.push(source[s]);
+    }
+  } else {
+    // objects
+    for (var s in source) {
+      destination[s] = source[s];
+    }
   }
+
 };
 
 // setup the initial oo object
