@@ -349,7 +349,7 @@ The `$afterInherited` method is called after the class has been inherited.
 
     $afterClassDefined(newClass, argumentsArray)
 
-The `$afterClassDefined` method is called after a new class has been compeltely defined.  I.e. mixins and base classes that appear after this class in the `oo.Class` method will have all been handled before this method is called.
+The `$afterClassDefined` method is called after a new class has been completely defined.  I.e. mixins and base classes that appear after this class in the `oo.Class` method will have all been handled before this method is called.
 
   * `this` will be the class itself
   * `newClass` is the compelte new class that has been defined.
