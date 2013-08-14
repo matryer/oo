@@ -5,13 +5,70 @@ buster.testCase("Events", {
 
     oo = ooreset();
 
-    MyTestClass = oo.Class("MyTestClass", {
+    MyTestClass = oo.Class("MyTestClass", oo.Events, {
 
-      success: new oo.Event(),
-      error: new oo.Event(),
-      progress: new oo.Event()
+      events: ["success", "error", "progress"]
 
     });
+
+  },
+
+  "oo.Events": function(){
+
+    var MyClass = oo.Class("MyClass", oo.Events, {});
+    var myObj = new MyClass();
+
+    var callbackThis = null;
+    var callbackArgs = null;
+    var callbackCount = 0;
+
+    // fire the event with no handlers
+    myObj.fire("something", 1, 2, 3);
+    assert.equals(0, callbackCount, "Nothing should happen.")
+
+    var callback = function(){
+      callbackCount++;
+      callbackThis = this;
+      callbackArgs = arguments;
+    };
+
+    // register for an event
+    assert.equals(myObj, myObj.on("something", callback));
+
+    // fire the event not here is a handler
+    myObj.fire("something", 1, 2, 3);
+
+    // make sure it was fired
+    assert.equals(1, callbackCount, "Callback should get called once")
+    assert.equals(myObj, callbackThis);
+    assert.equals(3, callbackArgs.length);
+    assert.equals(1, callbackArgs[0]);
+    assert.equals(2, callbackArgs[1]);
+    assert.equals(3, callbackArgs[2]);
+
+    // remove the callback
+    myObj.removeCallback("something", callback);
+
+    myObj.fire("something", 1, 2, 3);
+    assert.equals(1, callbackCount, "Callback not get called again");
+
+    // withEvent should call the beforeevent and afterevent 
+    // versions of the event name.
+    var before = false, after = false, block = false;
+
+    myObj.on("before:something", function(){
+      before = true;
+    });
+    myObj.on("after:something", function(){
+      after = true;
+    });
+    myObj.withEvent("something", function(){
+      block = true;
+    });
+
+    assert.equals(before, true);
+    assert.equals(after, true);
+    assert.equals(block, true);
 
   },
 
@@ -43,10 +100,10 @@ buster.testCase("Events", {
     };
     
     // add a callback
-    assert.equals(o.success, o.success.on(callback), "Event shortcut methods should chain.")
+    assert.equals(o.success(callback), o, "Event shortcut methods should chain.")
 
-    assert.equals(1, o.success.callbacks.length, "Func should be added to obj.event.callbacks")
-    assert.equals(callback, o.success.callbacks[0])
+    assert.equals(1, o.ooevents.success.length, "Func should be added to obj.event.callbacks")
+    assert.equals(callback, o.ooevents.success[0])
 
     // fire the event
     assert.equals(o, o.success(1, 2, 3))
@@ -76,7 +133,7 @@ buster.testCase("Events", {
     var o = new MyTestClass();
 
     // bind multiple callbacks
-    o.success.on(cb1).on(cb2).on(cb3);
+    o.success(cb1).success(cb2).success(cb3);
 
     // fire the event
     o.success();
@@ -92,27 +149,27 @@ buster.testCase("Events", {
 
     var callbacks = [];
     var cb1 = function(){
-      callbacks.push(1)
+      callbacks.push(1);
     };
     var cb2 = function(){
-      callbacks.push(2)
+      callbacks.push(2);
     };
     var cb3 = function(){
-      callbacks.push(3)
+      callbacks.push(3);
     };
 
     var o = new MyTestClass();
 
     // bind multiple callbacks
-    o.success.on(cb1).on(cb2).on(cb3);
+    o.success(cb1).success(cb2).success(cb3);
 
     // remove the 2nd callback
-    o.success.remove(cb2);
+    assert.equals(true, o.removeCallback("success", cb2), "return of removeCallback should be true")
 
     // fire the event
     o.success();
 
-    assert.equals(3, callbacks.length);
+    assert.equals(2, callbacks.length);
     assert.equals(1, callbacks[0]);
     assert.equals(3, callbacks[1]);
 

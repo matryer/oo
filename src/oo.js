@@ -1,7 +1,7 @@
 /*
 
   oo
-  v1.0
+  v1.2
   
   The worlds simplest JavaScript OO implementation.
   For if you just need classes, and nothing else.
@@ -163,23 +163,14 @@ var ooreset = function() {
           // get the property
           var theProperty = definition[property];
 
-          // is this an oo.Event?
-          if (theProperty && oo.Event && theProperty.$class == oo.Event) {
+          // is this a class or instance item?
+          if (property.substr(0, 1) === "$") {
 
-            oo.Event.$configure(property, klass.prototype);
+            klass[property] = theProperty;
 
           } else {
 
-            // is this a class or instance item?
-            if (property.substr(0, 1) === "$") {
-
-              klass[property] = theProperty;
-
-            } else {
-
-              klass.prototype[property] = theProperty;
-
-            }
+            klass.prototype[property] = theProperty;
 
           }
 
@@ -219,68 +210,129 @@ var ooreset = function() {
   /*
     oo Events
   */
-  oo.Event = oo.Class("oo.Event", {
+  // oo.Events mix in adds event support to objects.
+  oo.Events = {
 
-    // configure sets up the appropriate event methods
-    // on the target object.
-    $configure: function(name, target) {
+    $afterClassDefined: function(klass){
+      
+      // are there any explicit events specified in the
+      // events array?
+      if (klass.prototype.events) {
 
-      // method to add callback
-      var onFunc = function(target, func) {
-        target.callbacks = target.callbacks || [];
-        target.callbacks.push(func);
-      };
+        for (var i in klass.prototype.events) {
 
-      // method to fire callbacks
-      var fireFunc = function(target) {
-        if (target[name].callbacks) {
+          // get the event key
+          var event = klass.prototype.events[i];
 
-          // build argument list
-          var args = [];
-          for (var argi in arguments) {
-            if (argi > 0) {
-              args.push(arguments[argi]);
+          // add shortcut method
+          klass.prototype[event] = (function(){
+
+            var $event = event;
+
+            return function(){
+
+              // just one argument?
+              if (arguments.length === 1 && typeof arguments[0] == "function") {
+                
+                // add callback
+                var args = [$event, arguments[0]];
+                this.on.apply(this, args);
+
+              } else {
+                
+                // fire event
+                var args = [$event]; ooextend(arguments, args);
+                this.fire.apply(this, args);
+
+              }
+
+              // chain
+              return this;
+
             }
-          }
-
-          for (var func in target[name].callbacks) {
-            target[name].callbacks[func].apply(target, args);
-          }
+          })();
 
         }
-      };
-
-      // obj.eventName() fires the event
-      target[name] = function(){
-
-        // add the target (this) object as the first argument
-        var args = [this];
-        ooextend(arguments, args);
-        fireFunc.apply(null, args);
-        return this;
-
-      };
-
-      // on adds a callback
-      target[name].on = function(){
-
-        var args = [this];
-        ooextend(arguments, args);
-        onFunc.apply(null, args);
-        return this;
-
-      };
-
-      // remove removes a callback
-      target[name].remove = function(callback) {
-
-        // TODO:
 
       }
 
+    },
+
+    // on adds a callback for the specified event.
+    on: function(event, callback) {
+      this.ooevents = this.ooevents || {};
+      this.ooevents[event] = this.ooevents[event] || [];
+      this.ooevents[event].push(callback);
+      return this;
+    },
+
+    // fire calls all callbacks that are registered with
+    // the specified event.
+    fire: function(event) {
+      if (this.ooevents && this.ooevents[event]) {
+
+        // prepare args
+        var args = [];
+        for (var i = 1; i < arguments.length; i++) {
+          args.push(arguments[i]);
+        }
+
+        // call each callback
+        for (var i in this.ooevents[event]) {
+          var func = this.ooevents[event][i];
+          func.apply(this, args);
+        }
+
+      }
+    },
+
+    // removeCallback removes the callback registered to
+    // the specified event.  Returns true if the remove was
+    // successful, otherwise false if nothing was done.
+    removeCallback: function(event, callback) {
+      if (this.ooevents && this.ooevents[event]) {
+        // find the callback
+        for (var i in this.ooevents[event]) {
+          var func = this.ooevents[event][i];
+          if (func == callback) {
+            this.ooevents[event].splice(i,1);
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+
+    // withEvent calls 'before'+event and 'after'+event
+    // before and after executing the code block.
+    //
+    // If the before handler returns false, the codeblock is
+    // never called.
+    //
+    // The return of withEvent will be the return from the
+    // codeblock.
+    withEvent: function(event, codeblock) {
+
+      // call before event
+      var result = this.fire("before:" + event);
+
+      if (typeof result === "boolean" && result === false) {
+        // abort
+        return false;
+      }
+
+      // run the code
+      result = codeblock();
+
+      // call after event
+      this.fire("after:" + event, result);
+
+      // return the result
+      return result;
+
     }
 
-  });
+  };
 
   /*
     oo Exceptions
