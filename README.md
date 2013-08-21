@@ -6,13 +6,12 @@
 
   * [Easy class definition](#easy-class-definition)
   * Use the [`new` keyword](#use-the-new-operator) and [`this` keyword](#methods-are-just-functions-that-refer-to-this)
+  * [Properties](#properties) and [Events](#events)
   * [Constructors with the `init` method](#constructors-with-the-init-method)
   * [Class and static methods](#class-methods)
   * [Check for classes with `.$isClass` and get it with `.$class`](#check-for-classes-with-isclass-and-get-it-with-class`)
   * [Base classes](#base-classes) and [inheritance](#advanced-inheritance)
   * [Mix-ins](#mix-ins)
-  * [Properties](#properties)
-  * [Events](#events)
   * [Special class methods](#special-class-methods) let you write advanced OO capabilities.
   * Helpful supporting methods like; [ooextend](#ooextend) and [oobind](#oobind).
   * Full test suite
