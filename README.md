@@ -275,6 +275,8 @@ or to listen to an objects own events:
       // my own callback
     }
 
+  * Returning `false` from an event callback will prevent further event callbacks from being called.  Best practice is not to return anything if you do not want to stop execution.
+
 #### Firing events
 
     // fire the event
@@ -360,6 +362,35 @@ To fire an event, call the shortcut method with no arguments (or with any other 
 
     // fire the event with some arguments
     obj.complete(true, 123, data);
+
+### Class wide events
+
+When you mix in `oo.Events` to your class, the class itself also gets it's `on` and `fire` methods.  Listeners bound to the class will get called when _any_ event of that kind is fired on any of the instances.  The first argument will be the instance that is raising the event, followed by any other arguments that were passed when firing the event.
+
+For example,
+
+    var Animal = oo.Class("Animal", oo.Events, {
+      init: function(name){
+        this.name = name;
+        this.on("speak", function(instance, noise){
+          console.info(instance.name + " just made this noise: " + noise);
+        });
+      },
+      say: function(noise) {
+        this.fire("speak", noise);
+      }
+    });
+
+    var dog = new Animal("dog");
+    var cat = new Animal("cat");
+
+    dog.say("woof");
+    cat.say("meow");
+
+    // result in the console will be:
+    //
+    //   dog just made this noise: woof
+    //   cat just made this noise: meow
 
 ## Advanced inheritance
 
