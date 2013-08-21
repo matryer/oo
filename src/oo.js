@@ -2,6 +2,7 @@
 
   oo
   v1.2.2
+  github.com/stretchr/oo
   
   The worlds simplest JavaScript OO implementation.
   For if you just need cool classes, and nothing else.
