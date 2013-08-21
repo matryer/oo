@@ -245,6 +245,8 @@ Mix-ins are usually dumber than full base classes, but can be any kind of JavaSc
 
 ## Events
 
+  * New in `v1.2`
+
 Events allow you to write classes with built-in support for any kind of events, including the ability for other objects to observe the events, and trigger them.
 
 ### Using events
@@ -364,6 +366,8 @@ To fire an event, call the shortcut method with no arguments (or with any other 
     obj.complete(true, 123, data);
 
 ### Class wide events
+
+  * New in `v1.2.1`
 
 When you mix in `oo.Events` to your class, the class itself also gets it's `on` and `fire` methods.  Listeners bound to the class will get called when _any_ event of that kind is fired on any of the instances.  The first argument will be the instance that is raising the event, followed by any other arguments that were passed when firing the event.
 
