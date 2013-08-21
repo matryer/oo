@@ -506,7 +506,7 @@ NOTE: Newer editions of the language have their own [bind method](https://develo
 
 ## Licence
     
-Copyright (c) 2012 Mat Ryer
+Copyright (c) 2013 Mat Ryer
 
 Please consider promoting this project if you find it useful.
 
