@@ -11,6 +11,7 @@
   * [Check for classes with `.$isClass` and get it with `.$class`](#Check-for-classes-with-isClass-and-get-it-with-class`)
   * [Base classes](#base-classes) and [inheritance](#advanced-inheritance)
   * [Mix-ins](#mix-ins)
+  * [Events](#Events)
   * [Special class methods](#special-class-methods) let you write advanced OO capabilities.
   * Helpful supporting methods like; [ooextend](#ooextend) and [oobind](#oobind).
   * Full test suite
@@ -235,6 +236,63 @@ Mix-ins are usually dumber than full base classes, but can be any kind of JavaSc
 
     alert( i.getName() );
     // alerts "Mat"
+
+## Events
+
+Events allow you to write classes with built-in support for any kind of events, including the ability for other objects to observe the events, and trigger them.
+
+### Using events
+
+Each instance of a class with `oo.Events` enabled has their own eventing mechanism.
+
+#### Adding events to your objects
+
+To add events to a class, just use the `oo.Events` mixin:
+
+    var MyClass = oo.Class("MyClass", oo.Events, { /* your definition */ });
+
+Now, instances of `MyClass` will have access to the `on` and `fire` methods.
+
+#### Adding listeners
+
+    var myObj = new MyClass();
+    myObj.on("event-name", function(){
+      /* TODO: handle the event */
+    });
+
+#### Firing events
+
+    // fire the event
+    myObj.fire("event-name", arg1, arg2, arg3);
+
+### Defined events
+
+You can predefine events by mixing in the `oo.Events` mixin (see above), and by adding an `events` string array property in your definition.  Each event name will cause a shortcut methods to be created which is the cleanest interface for your class users.
+
+    var MyClass = oo.Class("MyClass", oo.Events, {
+      events: ["complete", "error", "progress"]
+    });
+
+Instances of `MyClass` will each have three extra methods; `complete`, `error` and `progress`.  These methods can be used to add listeners and fire the events.
+
+#### Shortcut methods: Adding listeners
+
+To add a listener to an event, just call the method and pass in a single `function` argument:
+
+    var obj = new MyClass();
+    obj.complete(function(){
+      alert("It is complete!");
+    });
+
+#### Shortcut methods: Firing events
+
+To fire an event, call the shortcut method with no arguments (or with any other arguments, apart from a single `function` argument):
+
+    // fire the event
+    obj.complete();
+
+    // fire the event with some arguments
+    obj.complete(true, 123, data);
 
 ## Advanced inheritance
 
