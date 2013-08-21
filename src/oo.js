@@ -114,42 +114,48 @@ var ooreset = function() {
 
         var item = arguments[i];
 
-        // handle $beforeInherited method
-        if (item.$beforeInherited) {
-          item = item.$beforeInherited(klass, arguments);
-        }
+        if (item) {
 
-        // skip if we have nothing
-        if (!item) continue;
+          // handle $beforeInherited method
+          if (item.$beforeInherited) {
+            item = item.$beforeInherited(klass, arguments);
+          }
 
-        // is this a base class?
-        if (item.$isClass) {
-          
-          // add it to the bases
-          klass.$bases[item.$className] = item;
+          // skip if we have nothing
+          if (!item) continue;
 
-          // write the base properties by default
-          ooextend(item.prototype, klass.prototype);
+          // is this a base class?
+          if (item.$isClass) {
+            
+            // add it to the bases
+            klass.$bases[item.$className] = item;
 
-          // save the class.BaseClass object
-          klass.prototype[item.$className] = item.prototype;
+            // write the base properties by default
+            ooextend(item.prototype, klass.prototype);
 
-        } else if (typeof item == "object") {
+            // save the class.BaseClass object
+            klass.prototype[item.$className] = item.prototype;
 
-          // mix in
+          } else if (typeof item == "object") {
 
-          ooextend(item, klass.prototype);
+            // mix in
 
-        }
+            ooextend(item, klass.prototype);
 
-        // handle the $afterInherited method
-        if (item.$afterInherited) {
-          item.$afterInherited(klass, arguments);
-        }
+          }
 
-        // handle the $afterInherited method
-        if (item.$afterClassDefined) {
-          afterClassDefinedList.push(item.$afterClassDefined.bind(item, klass, arguments))
+          // handle the $afterInherited method
+          if (item.$afterInherited) {
+            item.$afterInherited(klass, arguments);
+          }
+
+          // handle the $afterInherited method
+          if (item.$afterClassDefined) {
+            afterClassDefinedList.push(item.$afterClassDefined.bind(item, klass, arguments))
+          }
+
+        } else {
+          oowarn("Failed to inherit " + item + " when building " + className + " class.");
         }
 
       }
@@ -372,6 +378,114 @@ var ooreset = function() {
   };
 
   /*
+    oo.Properties
+  */
+  // oo.Properties mixin adds property support to classes.
+  oo.Properties = {
+
+    $afterClassDefined: function(klass){
+
+      if (klass.prototype.properties && klass.prototype.properties.length) {
+        for (var prop in klass.prototype.properties) {
+          // add this property
+          oo.Properties.$addProperty(klass.prototype, klass.prototype.properties[prop], true, true);
+        }
+      }
+      if (klass.prototype.getters && klass.prototype.getters.length) {
+        for (var prop in klass.prototype.getters) {
+          // add this property
+          oo.Properties.$addProperty(klass.prototype, klass.prototype.getters[prop], true, false);
+        }
+      }
+      if (klass.prototype.setters && klass.prototype.setters.length) {
+        for (var prop in klass.prototype.setters) {
+          // add this property
+          oo.Properties.$addProperty(klass.prototype, klass.prototype.setters[prop], false, true);
+        }
+      }
+
+    },
+
+    addProperty: function() {
+
+      // add the target
+      var args = [this];
+      for (var arg in arguments) {
+        args.push(arguments[arg]);
+      }
+
+      oo.Properties.$addProperty.apply(this, args);
+
+      return this;
+
+    }
+
+  };
+
+  // addProperty adds a property to the specified target (along with
+  // appropriate helper functions if needed).
+  //
+  // addProperty(target, name, getter, setter)
+  //
+  // {target} - The object to add the property to
+  // {name} - The name of the property
+  // {getter} - true|false or name of getter function
+  // {setter} - true|false or name of setter function
+  oo.Properties.$addProperty = function(target, name, getter, setter) {
+
+      var getterName = name;
+      var setterName;
+
+      target.getPropertyInternalName = target.getPropertyInternalName || function(name){
+        return "_"+name;
+      };
+      var internalName = target.getPropertyInternalName(name);
+
+      target.setProperty = target.setProperty || function(key, value){
+        this[this.getPropertyInternalName(key)] = value;
+        return this;
+      };
+      target.getProperty = target.getProperty || function(key){
+        return this[this.getPropertyInternalName(key)];
+      };
+
+      // initialise the space to hold the property value
+      target[internalName] = null;
+
+      // setter
+      if (setter !== false) {
+
+        if (setter === true) {
+          setterName = "set" + name.charAt(0).toUpperCase() + name.slice(1);;
+        } else {
+          setterName = setter;
+        }
+
+        target[setterName] = function(value){
+          this.setProperty(name, value);
+          return this;
+        }
+
+      }
+
+      // getter
+      if (getter !== false) {
+
+        if (getter !== true) {
+          getterName = getter;
+        }
+
+        target[getterName] = function() {
+          return this.getProperty(name);
+        }
+
+      }
+
+      return target; // chain
+
+    }
+
+  /*
     oo Exceptions
   */
 
@@ -408,6 +522,15 @@ var ooreset = function() {
 
   return oo;
 };
+
+// oowarn writes a warning to the console.
+var oowarn = function(msg) {
+  if (console) {
+    if (console.warn) {
+      console.warn(msg);
+    }
+  }
+}
 
 // ooextend simply copies properties from source into
 // destiantion.
