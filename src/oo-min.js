@@ -1,6 +1,6 @@
 /*
   oo
-  v1.0
+  v1.2
   
   The worlds simplest JavaScript OO implementation.
   For if you just need classes, and nothing else.
