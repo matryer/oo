@@ -452,87 +452,87 @@ var ooreset = function() {
   // {setter} - true|false or name of setter function
   oo.Properties.$addProperty = function(target, name, getter, setter) {
 
-      // events?
-      if (target.on) {
+    // events?
+    if (target.on) {
 
-        // ensure we have the generic property event
-        if (!target.propertyChanged) {
-          oo.Events.$addEvent(target, "propertyChanged");
-        }
-
-        // add the event for this property
-        oo.Events.$addEvent(target, name + "Changed");
-
+      // ensure we have the generic property event
+      if (!target.propertyChanged) {
+        oo.Events.$addEvent(target, "propertyChanged");
       }
 
-      var getterName = name;
-      var setterName;
-
-      // getPropertyInternalName method
-      target.getPropertyInternalName = target.getPropertyInternalName || function(name){
-        return "_"+name;
-      };
-      var internalName = target.getPropertyInternalName(name);
-
-      // setProperty method
-      target.setProperty = target.setProperty || function(key, value){
-
-        if (this.withEvent) {
-
-          this.withEvent("propertyChanged", name, this[internalName], value, function(){
-            this.withEvent(key + "Changed", this[internalName], value, function(){
-              this[this.getPropertyInternalName(key)] = value;
-            }.bind(this));
-          }.bind(this));
-
-        } else {
-          // just set it (no events)
-          this[this.getPropertyInternalName(key)] = value;
-        }
-
-        return this;
-      };
-
-      // getProperty method
-      target.getProperty = target.getProperty || function(key){
-        return this[this.getPropertyInternalName(key)];
-      };
-
-      // initialise the space to hold the property value
-      target[internalName] = null;
-
-      // setter
-      if (setter !== false) {
-
-        if (setter === true) {
-          setterName = "set" + name.charAt(0).toUpperCase() + name.slice(1);;
-        } else {
-          setterName = setter;
-        }
-
-        target[setterName] = target[setterName] || function(value){
-          this.setProperty(name, value);
-          return this;
-        }
-
-      }
-
-      // getter
-      if (getter !== false) {
-
-        if (getter !== true) {
-          getterName = getter;
-        }
-
-        target[getterName] = target[getterName] || function() {
-          return this.getProperty(name);
-        }
-
-      }
-
-      return target; // chain
+      // add the event for this property
+      oo.Events.$addEvent(target, name + "Changed");
 
     }
+
+    var getterName = name;
+    var setterName;
+
+    // getPropertyInternalName method
+    target.getPropertyInternalName = target.getPropertyInternalName || function(name){
+      return "_"+name;
+    };
+    var internalName = target.getPropertyInternalName(name);
+
+    // setProperty method
+    target.setProperty = target.setProperty || function(key, value){
+
+      if (this.withEvent) {
+
+        this.withEvent("propertyChanged", name, this[internalName], value, function(){
+          this.withEvent(key + "Changed", this[internalName], value, function(){
+            this[this.getPropertyInternalName(key)] = value;
+          }.bind(this));
+        }.bind(this));
+
+      } else {
+        // just set it (no events)
+        this[this.getPropertyInternalName(key)] = value;
+      }
+
+      return this;
+    };
+
+    // getProperty method
+    target.getProperty = target.getProperty || function(key){
+      return this[this.getPropertyInternalName(key)];
+    };
+
+    // initialise the space to hold the property value
+    target[internalName] = null;
+
+    // setter
+    if (setter !== false) {
+
+      if (setter === true) {
+        setterName = "set" + name.charAt(0).toUpperCase() + name.slice(1);;
+      } else {
+        setterName = setter;
+      }
+
+      target[setterName] = target[setterName] || function(value){
+        this.setProperty(name, value);
+        return this;
+      }
+
+    }
+
+    // getter
+    if (getter !== false) {
+
+      if (getter !== true) {
+        getterName = getter;
+      }
+
+      target[getterName] = target[getterName] || function() {
+        return this.getProperty(name);
+      }
+
+    }
+
+    return target; // chain
+
+  };
 
   /*
     oo Exceptions
@@ -579,7 +579,7 @@ var oowarn = function(msg) {
       console.warn(msg);
     }
   }
-}
+};
 
 // ooextend simply copies properties from source into
 // destiantion.
