@@ -268,7 +268,7 @@ Adding read and write only properties is as simple as defining different keys fo
 
 ### `oo.Properties` and `oo.Events`
 
-If you inherit both `oo.Properties` and `oo.Events`, you will automatically get events for each of your properties, as well as some general events for when any property changes.
+If you inherit both `oo.Properties` and [oo.Events](#events), you will automatically get events for each of your properties, as well as some general events for when any property changes.
 
 If you add a property called `name`, you will get an event called `nameChanged` which is called when a name has been changed.  Since the `setProperty` method uses the `withEvent` method (see below) you are also able to listen for the `before:nameChanged` event.
 
