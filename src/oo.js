@@ -311,10 +311,27 @@ var ooreset = function() {
     //
     // The return of withEvent will be the return from the
     // codeblock.
-    withEvent: function(event, codeblock) {
+    withEvent: function(event) {
+
+      // get the codeblock
+      var codeblock = arguments[arguments.length-1];
+
+      // make sure the last argument is a function
+      if (typeof codeblock !== "function") {
+        throw new oo.IncorrectArgumentsException("withEvent", "The last argument must be the codeblock to execute.");
+      }
+
+      // collect the arguments
+      var args = [];
+      for (var i = 1; i < arguments.length-1; i++) {
+        args.push(arguments[i]);
+      }
+
+      // add the event name as the first argument
+      args.unshift("before:" + event);
 
       // call before event
-      var result = this.fire("before:" + event);
+      var result = this.fire.apply(this, args);
 
       if (typeof result === "boolean" && result === false) {
         // abort
@@ -324,8 +341,14 @@ var ooreset = function() {
       // run the code
       result = codeblock();
 
+      // add the result to the end of the argument list
+      args.push(result);
+
+      // update the event name argument
+      args[0] = event;
+
       // call after event
-      this.fire(event, result);
+      this.fire.apply(this, args);
 
       // return the result
       return result;
@@ -359,6 +382,13 @@ var ooreset = function() {
   oo.IncorrectSyntaxException = oo.Class("oo.IncorrectSyntaxException", oo.Exception, {
     init: function(className) {
       this["oo.Exception"].init("Incorrect syntax when creating a new instance; don't just call the method, use the new keyword: var obj = new " + className + "();");
+    }
+  });
+
+  // IncorrectArgumentsException
+  oo.IncorrectArgumentsException = oo.Class("oo.IncorrectArgumentsException", oo.Exception, {
+    init: function(methodName, message) {
+      this["oo.Exception"].init("Incorrect syntax when calling " + methodName + "; " + message);
     }
   });
 

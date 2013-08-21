@@ -260,10 +260,71 @@ Now, instances of `MyClass` will have access to the `on` and `fire` methods.
       /* TODO: handle the event */
     });
 
+or to listen to an objects own events:
+
+    init: function(){
+      this.on("event-name", this.onEvent)
+    },
+    onEvent: function(){
+      // my own callback
+    }
+
 #### Firing events
 
     // fire the event
     myObj.fire("event-name", arg1, arg2, arg3);
+
+or from inside the object:
+
+    something: function(){
+      this.fire("event-name", arg1, arg2, arg3)
+    }
+
+#### Automagic _before_ events using `withEvent` method
+
+The `withEvent` method allows you to easily trigger two events, before and after running a code block.
+
+    // usage:
+    object.withEvent(eventName, [arguments, ] codeblock);
+
+For example:
+
+    // MyClass has an event called 'speak'
+    var myObj = new MyClass();
+
+    // ask asks the user for a Yes/No.
+    // Raises the before:speak and speak events.
+    ask: function(question){
+      this.withEvent("ask", question, function(){
+        return confirm(question);
+      });
+    }
+
+Calling the `ask` method above will cause the following things to happen:
+
+  # The `before:ask` event is raised with the 'question' as the only argument
+  # Assuming none of the `before:ask` handlers return false, the code block is next executed
+  # Finally, the `ask` event is called, with two arguments; the 'question' and the return from the codeblock.
+
+Event listeners might look like this:
+
+    myObj.on("before:ask", function(question){
+      // TODO: do something before we ask the user
+    });
+    myObj.on("ask", function(question, result){
+      // TODO: the event has happened, and the result
+      // is the last argument.
+    });
+
+#### Removing listeners
+
+To stop listening to an event, you can call the `removeCallback` method:
+
+    if (!myObj.removeCallback("event-name", myFunc)) {
+      // TODO: handle failure
+    }
+
+  * The `myFunc` argument must be the exact same object being removed, remember that using the `bind` method creates a new function each time.
 
 ### Defined events
 

@@ -66,9 +66,46 @@ buster.testCase("Events", {
       block = true;
     });
 
-    assert.equals(before, true);
-    assert.equals(after, true);
+    assert.equals(before, true, "before block called?");
+    assert.equals(after, true, "after block called?");
     assert.equals(block, true);
+
+  },
+
+  "withEvent with arguments": function(){
+
+    var MyClass = oo.Class("MyClass", oo.Events, {});
+    var myObj = new MyClass();
+
+    // withEvent should call the beforeevent and afterevent 
+    // versions of the event name.
+    var before = false, after = false, block = false;
+    var beforeArgs = [], afterArgs = [];
+
+    myObj.on("before:something", function(){
+      before = true;
+      beforeArgs = arguments;
+    });
+    myObj.on("something", function(){
+      after = true;
+      afterArgs = arguments;
+    });
+
+    myObj.withEvent("something", 1, 2, 3, function(){
+      block = true;
+      return 123;
+    });
+
+    assert.equals(beforeArgs.length, 3, "before args");
+    assert.equals(beforeArgs[0], 1);
+    assert.equals(beforeArgs[1], 2);
+    assert.equals(beforeArgs[2], 3);
+
+    assert.equals(afterArgs.length, 4, "after args");
+    assert.equals(afterArgs[0], 1);
+    assert.equals(afterArgs[1], 2);
+    assert.equals(afterArgs[2], 3);
+    assert.equals(afterArgs[3], 123);
 
   },
 
