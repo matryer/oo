@@ -11,6 +11,7 @@
   * [Check for classes with `.$isClass` and get it with `.$class`](#Check-for-classes-with-isClass-and-get-it-with-class`)
   * [Base classes](#base-classes) and [inheritance](#advanced-inheritance)
   * [Mix-ins](#mix-ins)
+  * [Events](#Events)
   * [Special class methods](#special-class-methods) let you write advanced OO capabilities.
   * Helpful supporting methods like; [ooextend](#ooextend) and [oobind](#oobind).
   * Full test suite
@@ -40,7 +41,8 @@ You are free to copy the source and host it on your own servers if you leave the
 
 ### Change log
 
-  * Edge - Added [special class methods](#special-class-methods)
+  * v1.2 - Added events
+  * v1.1 - Added [special class methods](#special-class-methods)
   * v1.0 - Initial release
   * v0.2 - BETA release
 
@@ -235,6 +237,124 @@ Mix-ins are usually dumber than full base classes, but can be any kind of JavaSc
     alert( i.getName() );
     // alerts "Mat"
 
+## Events
+
+Events allow you to write classes with built-in support for any kind of events, including the ability for other objects to observe the events, and trigger them.
+
+### Using events
+
+Each instance of a class with `oo.Events` enabled has their own eventing mechanism.
+
+#### Adding events to your objects
+
+To add events to a class, just use the `oo.Events` mixin:
+
+    var MyClass = oo.Class("MyClass", oo.Events, { /* your definition */ });
+
+Now, instances of `MyClass` will have access to the `on` and `fire` methods.
+
+#### Adding listeners
+
+    var myObj = new MyClass();
+    myObj.on("event-name", function(){
+      /* TODO: handle the event */
+    });
+
+or to listen to an objects own events:
+
+    init: function(){
+      this.on("event-name", this.onEvent)
+    },
+    onEvent: function(){
+      // my own callback
+    }
+
+#### Firing events
+
+    // fire the event
+    myObj.fire("event-name", arg1, arg2, arg3);
+
+or from inside the object:
+
+    something: function(){
+      this.fire("event-name", arg1, arg2, arg3)
+    }
+
+#### Automagic _before_ events using `withEvent` method
+
+The `withEvent` method allows you to easily trigger two events, before and after running a code block.
+
+    // usage:
+    object.withEvent(eventName, [arguments, ] codeblock);
+
+For example:
+
+    // MyClass has an event called 'speak'
+    var myObj = new MyClass();
+
+    // ask asks the user for a Yes/No.
+    // Raises the before:speak and speak events.
+    ask: function(question){
+      this.withEvent("ask", question, function(){
+        return confirm(question);
+      });
+    }
+
+Calling the `ask` method above will cause the following things to happen:
+
+  # The `before:ask` event is raised with the 'question' as the only argument
+  # Assuming none of the `before:ask` handlers return false, the code block is next executed
+  # Finally, the `ask` event is called, with two arguments; the 'question' and the return from the codeblock.
+
+Event listeners might look like this:
+
+    myObj.on("before:ask", function(question){
+      // TODO: do something before we ask the user
+    });
+    myObj.on("ask", function(question, result){
+      // TODO: the event has happened, and the result
+      // is the last argument.
+    });
+
+#### Removing listeners
+
+To stop listening to an event, you can call the `removeCallback` method:
+
+    if (!myObj.removeCallback("event-name", myFunc)) {
+      // TODO: handle failure
+    }
+
+  * The `myFunc` argument must be the exact same object being removed, remember that using the `bind` method creates a new function each time.
+
+### Defined events
+
+You can predefine events by mixing in the `oo.Events` mixin (see above), and by adding an `events` string array property in your definition.  Each event name will cause a shortcut methods to be created which is the cleanest interface for your class users.
+
+    var MyClass = oo.Class("MyClass", oo.Events, {
+      events: ["complete", "error", "progress"]
+    });
+
+Instances of `MyClass` will each have three extra methods; `complete`, `error` and `progress`.  These methods can be used to add listeners and fire the events.
+
+#### Shortcut methods: Adding listeners
+
+To add a listener to an event, just call the method and pass in a single `function` argument:
+
+    var obj = new MyClass();
+    obj.complete(function(){
+      alert("It is complete!");
+    });
+
+#### Shortcut methods: Firing events
+
+To fire an event, call the shortcut method with no arguments (or with any other arguments, apart from a single `function` argument):
+
+    // fire the event
+    obj.complete();
+
+    // fire the event with some arguments
+    obj.complete(true, 123, data);
+
 ## Advanced inheritance
 
 ### Accessing overridden base methods
@@ -348,7 +468,7 @@ The `$afterInherited` method is called after the class has been inherited.
 
     $afterClassDefined(newClass, argumentsArray)
 
-The `$afterClassDefined` method is called after a new class has been compeltely defined.  I.e. mixins and base classes that appear after this class in the `oo.Class` method will have all been handled before this method is called.
+The `$afterClassDefined` method is called after a new class has been completely defined.  I.e. mixins and base classes that appear after this class in the `oo.Class` method will have all been handled before this method is called.
 
   * `this` will be the class itself
   * `newClass` is the compelte new class that has been defined.

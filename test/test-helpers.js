@@ -10,13 +10,16 @@ var stub = function(orig, func){
 var unstub = function(func) {
  return func.orig;
 };
+var stubbed = function(func) {
+  return typeof func.orig == "function";
+};
 
 function ok(something) {
   refute.isNull(something);
 }
 function something(something) {
-  refute.equals("undefined", typeof something);
+  refute.equals(typeof something, "undefined");
 }
 function isFunction(func) {
-  assert.equals("function", typeof func);
+  assert.equals(typeof func, "function", "Expected to be a function.");
 }

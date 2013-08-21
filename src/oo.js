@@ -1,7 +1,7 @@
 /*
 
   oo
-  v1.0
+  v1.2
   
   The worlds simplest JavaScript OO implementation.
   For if you just need classes, and nothing else.
@@ -41,7 +41,7 @@ var ooreset = function() {
   var oo = {
 
     // the oo version number
-    version: "1.1",
+    version: "1.2",
 
     // oo.classes holds an array of all known class names.
     classes: [],
@@ -72,6 +72,10 @@ var ooreset = function() {
 
       // make the class thing
       var klass = function(){
+
+        if (!this.$initialiseBases) {
+          throw new oo.IncorrectSyntaxException(className);
+        }
 
         // initialise bases
         this.$initialiseBases.apply(this);
@@ -156,14 +160,17 @@ var ooreset = function() {
         var definition = arguments[arguments.length-1];
         for (var property in definition) {
 
-          // is this a class or instance item?
-          if (property.substr(0, 1) == "$") {
+          // get the property
+          var theProperty = definition[property];
 
-            klass[property] = definition[property];
+          // is this a class or instance item?
+          if (property.substr(0, 1) === "$") {
+
+            klass[property] = theProperty;
 
           } else {
 
-            klass.prototype[property] = definition[property];
+            klass.prototype[property] = theProperty;
 
           }
 
@@ -201,6 +208,156 @@ var ooreset = function() {
   };
 
   /*
+    oo Events
+  */
+  // oo.Events mix in adds event support to objects.
+  oo.Events = {
+
+    $afterClassDefined: function(klass){
+      
+      // are there any explicit events specified in the
+      // events array?
+      if (klass.prototype.events) {
+
+        for (var i in klass.prototype.events) {
+
+          // get the event key
+          var event = klass.prototype.events[i];
+
+          // add shortcut method
+          klass.prototype[event] = (function(){
+
+            var $event = event;
+
+            return function(){
+
+              // just one argument?
+              if (arguments.length === 1 && typeof arguments[0] == "function") {
+                
+                // add callback
+                var args = [$event, arguments[0]];
+                this.on.apply(this, args);
+
+              } else {
+                
+                // fire event
+                var args = [$event]; ooextend(arguments, args);
+                this.fire.apply(this, args);
+
+              }
+
+              // chain
+              return this;
+
+            }
+          })();
+
+        }
+
+      }
+
+    },
+
+    // on adds a callback for the specified event.
+    on: function(event, callback) {
+      this.ooevents = this.ooevents || {};
+      this.ooevents[event] = this.ooevents[event] || [];
+      this.ooevents[event].push(callback);
+      return this;
+    },
+
+    // fire calls all callbacks that are registered with
+    // the specified event.
+    fire: function(event) {
+      if (this.ooevents && this.ooevents[event]) {
+
+        // prepare args
+        var args = [];
+        for (var i = 1; i < arguments.length; i++) {
+          args.push(arguments[i]);
+        }
+
+        // call each callback
+        for (var i in this.ooevents[event]) {
+          var func = this.ooevents[event][i];
+          func.apply(this, args);
+        }
+
+      }
+    },
+
+    // removeCallback removes the callback registered to
+    // the specified event.  Returns true if the remove was
+    // successful, otherwise false if nothing was done.
+    removeCallback: function(event, callback) {
+      if (this.ooevents && this.ooevents[event]) {
+        // find the callback
+        for (var i in this.ooevents[event]) {
+          var func = this.ooevents[event][i];
+          if (func == callback) {
+            this.ooevents[event].splice(i,1);
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+
+    // withEvent calls 'before'+event and event
+    // before and after executing the code block.
+    //
+    // If the before handler returns false, the codeblock is
+    // never called.
+    //
+    // The return of withEvent will be the return from the
+    // codeblock.
+    withEvent: function(event) {
+
+      // get the codeblock
+      var codeblock = arguments[arguments.length-1];
+
+      // make sure the last argument is a function
+      if (typeof codeblock !== "function") {
+        throw new oo.IncorrectArgumentsException("withEvent", "The last argument must be the codeblock to execute.");
+      }
+
+      // collect the arguments
+      var args = [];
+      for (var i = 1; i < arguments.length-1; i++) {
+        args.push(arguments[i]);
+      }
+
+      // add the event name as the first argument
+      args.unshift("before:" + event);
+
+      // call before event
+      var result = this.fire.apply(this, args);
+
+      if (typeof result === "boolean" && result === false) {
+        // abort
+        return false;
+      }
+
+      // run the code
+      result = codeblock();
+
+      // add the result to the end of the argument list
+      args.push(result);
+
+      // update the event name argument
+      args[0] = event;
+
+      // call after event
+      this.fire.apply(this, args);
+
+      // return the result
+      return result;
+
+    }
+
+  };
+
+  /*
     oo Exceptions
   */
 
@@ -210,7 +367,7 @@ var ooreset = function() {
       this.message = message;
     },
     toString: function(){
-      return "<{ oo.Exception: \" + message + \" }>";
+      return "oo.Exception: \" + message + \"";
     }
   });
 
@@ -221,15 +378,40 @@ var ooreset = function() {
     }
   });
 
+  // IncorrectSyntaxException
+  oo.IncorrectSyntaxException = oo.Class("oo.IncorrectSyntaxException", oo.Exception, {
+    init: function(className) {
+      this["oo.Exception"].init("Incorrect syntax when creating a new instance; don't just call the method, use the new keyword: var obj = new " + className + "();");
+    }
+  });
+
+  // IncorrectArgumentsException
+  oo.IncorrectArgumentsException = oo.Class("oo.IncorrectArgumentsException", oo.Exception, {
+    init: function(methodName, message) {
+      this["oo.Exception"].init("Incorrect syntax when calling " + methodName + "; " + message);
+    }
+  });
+
   return oo;
 };
 
 // ooextend simply copies properties from source into
 // destiantion.
-var ooextend = function(source, destination){
-  for (var s in source) {
-    destination[s] = source[s];
+var ooextend = function(source, destination) {
+
+  // is this an array?
+  if (typeof source.length != "undefined" && typeof destination.length != "undefined") {
+    // array
+    for (var s in source) {
+      destination.push(source[s]);
+    }
+  } else {
+    // objects
+    for (var s in source) {
+      destination[s] = source[s];
+    }
   }
+
 };
 
 // setup the initial oo object
