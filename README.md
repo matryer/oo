@@ -303,7 +303,13 @@ You are free to use these directly instead of the helper methods:
 
 If you explitly specify getters and setters for your properties in your class definition, they will be used instead of the default ones.  This allows you to control exactly how your class deals with such properties.
 
-IMPORTANT: It is still recommended that you use the underlying `getProperty` and `setProperty` methods if you are indeed using internal storage, because you get eventing for free.  If you choose not to, you would have to implement your own events for your properties.
+It is still recommended that you use the underlying `getProperty` and `setProperty` methods if you are indeed using internal storage, because you get eventing for free.  If you choose not to, you would have to implement your own events for your properties, like this:
+
+    setSomething: function(val) {
+      this.withEvent("somethingChanged", oldValue, val, function(){
+        // your code
+      }.bind(this))
+    }
 
 ### Advanced property management
 
