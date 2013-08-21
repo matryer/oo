@@ -22,7 +22,7 @@ In your HTML page, just include a `script` tag for the appropriate version hoste
 
 #### Latest edge version
 
-    <script src="https://raw.github.com/stretchrcom/oo/master/src/oo.js"></script>
+    <script src="https://raw.github.com/stretchr/oo/master/src/oo.js"></script>
 
 #### Specific releases
 
@@ -33,16 +33,16 @@ In your HTML page, just include a `script` tag for the appropriate version hoste
 
 ##### v1.0
 
-  * `<script src="https://raw.github.com/stretchrcom/oo/v0.2/src/oo.js"></script>`
-  * Minified (2,162 bytes): `<script src="https://raw.github.com/stretchrcom/oo/v1.0/src/oo-min.js"></script>`
+  * `<script src="https://raw.github.com/stretchr/oo/v0.2/src/oo.js"></script>`
+  * Minified (2,162 bytes): `<script src="https://raw.github.com/stretchr/oo/v1.0/src/oo-min.js"></script>`
 
 #### Other versions
 
-If you want the features from a specific branch, navigate to the branch on https://github.com/stretchrcom/oo/branches and look for the raw file `/src/oo.js`, and set that as your `src` attribute.
+If you want the features from a specific branch, navigate to the branch on https://github.com/stretchr/oo/branches and look for the raw file `/src/oo.js`, and set that as your `src` attribute.
 
 #### Host it yourself (recommended)
 
-You are free to copy the source and host it on your own servers if you leave the comments in place.  See the [licence](https://github.com/stretchrcom/oo#licence) for more information.
+You are free to copy the source and host it on your own servers if you leave the comments in place.  See the [licence](https://github.com/stretchr/oo#licence) for more information.
 
 ### Change log
 

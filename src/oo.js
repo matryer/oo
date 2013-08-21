@@ -8,7 +8,7 @@
 
   Copyright (c) 2013 Mat Ryer
   Please consider promoting this project if you find it useful.
-  Be sure to check out the Licence: https://github.com/stretchrcom/oo#licence
+  Be sure to check out the Licence: https://github.com/stretchr/oo#licence
 
   ---
 
