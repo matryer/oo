@@ -1,11 +1,11 @@
 var MyTestClass;
-buster.testCase("Events", {
+buster.testCase("Properties", {
   
   setUp: function(){
 
     oo = ooreset();
 
-    MyTestClass = oo.Class("MyTestClass", oo.Properties, {
+    MyTestClass = oo.Class("MyTestClass", oo.Events, oo.Properties, {
 
       properties: ["name", "age"],
       setters: ["style"],
@@ -96,6 +96,46 @@ buster.testCase("Events", {
     assert.equals(o.age(), 10);
     o.setAge(-100);
     assert.equals(o.age(), 0);
+
+  },
+
+  "properties and events": function(){
+
+    var o = new MyTestClass();
+
+    refute.equals(typeof o.nameChanged, "undefined", "typeof o.nameChanged");
+
+    o.setName("Tyler");
+
+    var newName = null;
+    var beforeOld = null;
+    var beforeNew = null;
+
+    o.nameChanged(function(old, value){
+      newName = value;
+    });
+    o.on("before:nameChanged", function(oldName, newName){
+      beforeOld = oldName;
+      beforeNew = newName;
+    });
+
+    var propChangedName, propChangedOld, propChangedNew;
+    o.propertyChanged(function(name, oldValue, newValue){
+      propChangedName = name;
+      propChangedOld = oldValue;
+      propChangedNew = newValue;
+    });
+
+    o.setName("Mat");
+    assert.equals(newName, "Mat");
+    assert.equals(o.name(), "Mat");
+
+    assert.equals(beforeOld, "Tyler");
+    assert.equals(beforeNew, "Mat");
+
+    assert.equals(propChangedName, "name");
+    assert.equals(propChangedOld, "Tyler");
+    assert.equals(propChangedNew, "Mat");
 
   }
 

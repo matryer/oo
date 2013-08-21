@@ -46,6 +46,7 @@ You are free to copy the source and host it on your own servers if you leave the
 
 ### Change log
 
+  * v1.2.2 - Added properties
   * v1.2.1 - Added class-wide events
   * v1.2   - Added events
   * v1.1   - Added [special class methods](#special-class-methods)
@@ -66,16 +67,9 @@ To define a class, just use the `oo.Class` method:
 
 You can do this:
 
-    var MyClass = oo.Class("MyClass", {
+    var MyClass = oo.Class("MyClass", oo.Events, oo.Properties, {
 
-      getName: function(){
-        return this.name;
-      },
-
-      setName: function(value) {
-        this.name = value;
-        return this;
-      }
+      properties: ["name"]
 
     });
 
@@ -243,6 +237,105 @@ Mix-ins are usually dumber than full base classes, but can be any kind of JavaSc
     alert( i.getName() );
     // alerts "Mat"
 
+## Properties
+
+  * New in `v1.2.2`
+
+Properties make adding getters and setters to your class very easy.  By mixing in `oo.Properties`, you can specify the properties of your class by setting the appropriate string arrays:
+
+    {
+      properties: ["name", "age"]
+    }
+
+Four methods will be added to your objects;
+
+  * `name()`
+  * `setName(name)`
+  * `age()`
+  * `setAge(age)`
+
+These methods allow you easily get and set the appropriate values.
+
+### Read and write only
+
+Adding read and write only properties is as simple as defining different keys for your property string arrays:
+
+    {
+      properties: ["name", "age"], /* will have getters and setters */
+      setters: ["style"], /* will only have setStyle */
+      getters: ["description"] /* will only have description() (i.e. no setDescription method) */
+    }
+
+### `oo.Properties` and `oo.Events`
+
+If you inherit both `oo.Properties` and `oo.Events`, you will automatically get events for each of your properties, as well as some general events for when any property changes.
+
+If you add a property called `name`, you will get an event called `nameChanged` which is called when a name has been changed.  Since the `setProperty` method uses the `withEvent` method (see below) you are also able to listen for the `before:nameChanged` event.
+
+The signature for the property events looks like this:
+
+    {event}Changed({old}, {new})
+
+  * `{event}` is the name of the event
+  * `{old}` is the old value
+  * `{new}` is the new value
+
+You may also listen to the generic `propertyChanged` event (and `before:propertyChanged`) to be notified of any property changes.  
+
+The signature for the generic `propertyChanged` event is:
+
+    propertyChanged({event}, {old}, {new}) 
+
+  * `{event}` is the name of the event
+  * `{old}` is the old value
+  * `{new}` is the new value
+
+### Using the underlying modifiers
+
+oo.Properties adds `getProperty` and `setProperty` methods to your objects.  These are the methods that do the actual work of getting and setting properties.
+
+You are free to use these directly instead of the helper methods:
+
+    var name = o.getProperty("name");
+    o.setProperty("name", "Mat").setProperty("age", 30)
+
+### Specifying your own getters and setters
+
+If you explitly specify getters and setters for your properties in your class definition, they will be used instead of the default ones.  This allows you to control exactly how your class deals with such properties.
+
+IMPORTANT: It is still recommended that you use the underlying `getProperty` and `setProperty` methods if you are indeed using internal storage, because you get eventing for free.  If you choose not to, you would have to implement your own events for your properties.
+
+### Advanced property management
+
+#### Adding properties later
+
+Since JavaScript is such a magic language, you are able to use the `addProperty` method to add a property to your instances after they have been created.
+
+    instance.addProperty({name}, {getter}, {setter})
+
+  * `{name}` is the name of the property
+  * `{getter}` is true if you want a getter (or optionally the name of the getter method)
+  * `{setter}` is true if you want a setter (or optionally the name of the setter method)
+
+For example:
+
+    var o = new MyClass();
+    o.addProperty("something", true, "assignSomething");
+
+The above code will create a property called `something`, stored in `this._something`, with a getter method called `something()` and a setter method called `assignSomething()`.
+
+#### Internal storage
+
+Properties are typically stored in the object with the property name prefixed with an underscore.  So the value for the `name` property will be stored in `this._name`.
+
+You can change this by overriding the `getPropertyInternalName` method:
+
+    {
+      getPropertyInternalName: function(name) {
+        return "internal_" + name;
+      }
+    } 
+
 ## Events
 
   * New in `v1.2`
@@ -395,6 +488,12 @@ For example,
     //
     //   dog just made this noise: woof
     //   cat just made this noise: meow
+
+### Adding events at runtime
+
+You can add events to any target by calling the `oo.Events.$addEvent` method:
+
+    oo.Events.$addEvent(target, eventName);
 
 ## Advanced inheritance
 

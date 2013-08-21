@@ -72,6 +72,36 @@ buster.testCase("Events", {
 
   },
 
+  "withEvent - before handler cancels event": function(){
+
+    var MyClass = oo.Class("MyClass", oo.Events, {});
+    var myObj = new MyClass();
+
+    // withEvent should call the beforeevent and afterevent 
+    // versions of the event name.
+    var before = false, after = false, block = false;
+    var beforeArgs = [], afterArgs = [];
+
+    myObj.on("before:something", function(){
+      before = true;
+      beforeArgs = arguments;
+      return false;
+    });
+    myObj.on("something", function(){
+      after = true;
+      afterArgs = arguments;
+    });
+
+    myObj.withEvent("something", 1, 2, 3, function(){
+      block = true;
+      return 123;
+    });
+
+    assert.equals(before, true);
+    assert.equals(after, false);
+
+  },
+
   "withEvent with arguments": function(){
 
     var MyClass = oo.Class("MyClass", oo.Events, {});

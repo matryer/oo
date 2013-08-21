@@ -219,6 +219,37 @@ var ooreset = function() {
   // oo.Events mix in adds event support to objects.
   oo.Events = {
 
+    $addEvent: function(target, event) {
+
+      target[event] = (function(){
+
+        var $event = event;
+
+        return function(){
+
+          // just one argument?
+          if (arguments.length === 1 && typeof arguments[0] == "function") {
+            
+            // add callback
+            var args = [$event, arguments[0]];
+            this.on.apply(this, args);
+
+          } else {
+            
+            // fire event
+            var args = [$event]; ooextend(arguments, args);
+            this.fire.apply(this, args);
+
+          }
+
+          // chain
+          return this;
+
+        }
+      })();
+
+    },
+
     $afterClassDefined: function(klass){
       
       // add events to the class itself
@@ -236,32 +267,7 @@ var ooreset = function() {
           var event = klass.prototype.events[i];
 
           // add shortcut method
-          klass.prototype[event] = (function(){
-
-            var $event = event;
-
-            return function(){
-
-              // just one argument?
-              if (arguments.length === 1 && typeof arguments[0] == "function") {
-                
-                // add callback
-                var args = [$event, arguments[0]];
-                this.on.apply(this, args);
-
-              } else {
-                
-                // fire event
-                var args = [$event]; ooextend(arguments, args);
-                this.fire.apply(this, args);
-
-              }
-
-              // chain
-              return this;
-
-            }
-          })();
+          oo.Events.$addEvent(klass.prototype, event);
 
         }
 
@@ -300,10 +306,10 @@ var ooreset = function() {
         for (var i in this.ooevents[event]) {
           var func = this.ooevents[event][i];
           var result = func.apply(this, args);
-          if (result === false) { break; } // break early?
+          if (result === false) { return false; } // break early?
         }
-
       }
+
     },
 
     // removeCallback removes the callback registered to
@@ -433,18 +439,48 @@ var ooreset = function() {
   // {setter} - true|false or name of setter function
   oo.Properties.$addProperty = function(target, name, getter, setter) {
 
+      // events?
+      if (target.on) {
+
+        // ensure we have the generic property event
+        if (!target.propertyChanged) {
+          oo.Events.$addEvent(target, "propertyChanged");
+        }
+
+        // add the event for this property
+        oo.Events.$addEvent(target, name + "Changed");
+
+      }
+
       var getterName = name;
       var setterName;
 
+      // getPropertyInternalName method
       target.getPropertyInternalName = target.getPropertyInternalName || function(name){
         return "_"+name;
       };
       var internalName = target.getPropertyInternalName(name);
 
+      // setProperty method
       target.setProperty = target.setProperty || function(key, value){
-        this[this.getPropertyInternalName(key)] = value;
+
+        if (this.withEvent) {
+
+          this.withEvent("propertyChanged", name, this[internalName], value, function(){
+            this.withEvent(key + "Changed", this[internalName], value, function(){
+              this[this.getPropertyInternalName(key)] = value;
+            }.bind(this));
+          }.bind(this));
+
+        } else {
+          // just set it (no events)
+          this[this.getPropertyInternalName(key)] = value;
+        }
+
         return this;
       };
+
+      // getProperty method
       target.getProperty = target.getProperty || function(key){
         return this[this.getPropertyInternalName(key)];
       };
