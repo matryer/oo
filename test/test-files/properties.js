@@ -9,7 +9,14 @@ buster.testCase("Events", {
 
       properties: ["name", "age"],
       setters: ["style"],
-      getters: ["description"]
+      getters: ["description"],
+
+      // overridden handler
+      setAge: function(age) {
+        if (age < 0) { age = 0; }
+        this.setProperty("age", age);
+        return this;
+      }
 
     });
 
@@ -78,6 +85,17 @@ buster.testCase("Events", {
     assert.equals(typeof o.style, "undefined");
     assert.equals(o.setStyle("Else"), o);
     assert.equals(o._style, "Else");
+
+  },
+
+  "class properties with explicit setter": function(){
+
+    var o = new MyTestClass();
+
+    o.setAge(10);
+    assert.equals(o.age(), 10);
+    o.setAge(-100);
+    assert.equals(o.age(), 0);
 
   }
 

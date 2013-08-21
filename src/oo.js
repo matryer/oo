@@ -41,7 +41,7 @@ var ooreset = function() {
   var oo = {
 
     // the oo version number
-    version: "1.2.1",
+    version: "1.2.2",
 
     // oo.classes holds an array of all known class names.
     classes: [],
@@ -461,7 +461,7 @@ var ooreset = function() {
           setterName = setter;
         }
 
-        target[setterName] = function(value){
+        target[setterName] = target[setterName] || function(value){
           this.setProperty(name, value);
           return this;
         }
@@ -475,7 +475,7 @@ var ooreset = function() {
           getterName = getter;
         }
 
-        target[getterName] = function() {
+        target[getterName] = target[getterName] || function() {
           return this.getProperty(name);
         }
 
