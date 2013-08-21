@@ -4,7 +4,7 @@
   v1.2.1
   
   The worlds simplest JavaScript OO implementation.
-  For if you just need classes, and nothing else.
+  For if you just need cool classes, and nothing else.
 
   Copyright (c) 2013 Mat Ryer
   Please consider promoting this project if you find it useful.
@@ -14,20 +14,33 @@
 
   Usage:
 
-      var SayHelloClass = oo.Class("SayHelloClass", {
+      var GreeterClass = oo.Class("GreeterClass", oo.Events, oo.Properties, {
       
+        properties: ["name"],
+
         init: function(name) {
-          this.name = name;
+          this.setName(name);
         },
 
         sayHello: function() {
-          alert("Hello " + this.name);
+          alert("Hello " + this.name());
         }
 
       });
 
-      var helloToMat = new SayHelloClass("Mat");
-      helloToMat.sayHello();
+      var greeter = new GreeterClass("Mat");
+      greeter.sayHello();
+      // alerts "Hello Mat"
+
+      greeter.nameChanged(function(oldName, newName){
+        alert("Your name was " + oldName + ", but is now " + newName + ".");
+      });
+
+      greeter.setName("Tyler");
+      // alerts "Your name was Mat, but is now Tyler."
+
+      greeter.sayHello();
+      // alerts "Hello Tyler"
 
 */
 
