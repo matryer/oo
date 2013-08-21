@@ -303,7 +303,7 @@ var ooreset = function() {
       return false;
     },
 
-    // withEvent calls 'before'+event and 'after'+event
+    // withEvent calls 'before'+event and event
     // before and after executing the code block.
     //
     // If the before handler returns false, the codeblock is
@@ -325,7 +325,7 @@ var ooreset = function() {
       result = codeblock();
 
       // call after event
-      this.fire("after:" + event, result);
+      this.fire(event, result);
 
       // return the result
       return result;

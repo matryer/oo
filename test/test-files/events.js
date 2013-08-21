@@ -59,7 +59,7 @@ buster.testCase("Events", {
     myObj.on("before:something", function(){
       before = true;
     });
-    myObj.on("after:something", function(){
+    myObj.on("something", function(){
       after = true;
     });
     myObj.withEvent("something", function(){
