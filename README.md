@@ -302,9 +302,9 @@ For example:
 
 Calling the `ask` method above will cause the following things to happen:
 
-  # The `before:ask` event is raised with the 'question' as the only argument
-  # Assuming none of the `before:ask` handlers return false, the code block is next executed
-  # Finally, the `ask` event is called, with two arguments; the 'question' and the return from the codeblock.
+  * The `before:ask` event is raised with the 'question' as the only argument
+  * Assuming none of the `before:ask` handlers return false, the code block is next executed
+  * Finally, the `ask` event is called, with two arguments; the 'question' and the return from the codeblock.
 
 Event listeners might look like this:
 
