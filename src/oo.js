@@ -1,7 +1,7 @@
 /*
 
   oo
-  v1.2
+  v1.2.1
   
   The worlds simplest JavaScript OO implementation.
   For if you just need classes, and nothing else.
@@ -41,7 +41,7 @@ var ooreset = function() {
   var oo = {
 
     // the oo version number
-    version: "1.2",
+    version: "1.2.1",
 
     // oo.classes holds an array of all known class names.
     classes: [],
@@ -215,6 +215,11 @@ var ooreset = function() {
 
     $afterClassDefined: function(klass){
       
+      // add events to the class itself
+      klass.on = oo.Events.on;
+      klass.fire = oo.Events.fire;
+      klass.removeCallback = oo.Events.removeCallback;
+
       // are there any explicit events specified in the
       // events array?
       if (klass.prototype.events) {
@@ -269,18 +274,27 @@ var ooreset = function() {
     // fire calls all callbacks that are registered with
     // the specified event.
     fire: function(event) {
+
+      // get args minus the event name
+      var args = [];
+      var classArgs = [event, this];
+      for (var i = 1; i < arguments.length; i++) {
+        args.push(arguments[i]);
+        classArgs.push(arguments[i]);
+      }
+
+      // handle events on the class if applicable
+      if (this.$class && this.$class.ooevents && this.$class.ooevents[event]) {
+        this.$class.fire.apply(this.$class, classArgs);
+      }
+
+      // handle events on this instance
       if (this.ooevents && this.ooevents[event]) {
-
-        // prepare args
-        var args = [];
-        for (var i = 1; i < arguments.length; i++) {
-          args.push(arguments[i]);
-        }
-
         // call each callback
         for (var i in this.ooevents[event]) {
           var func = this.ooevents[event][i];
-          func.apply(this, args);
+          var result = func.apply(this, args);
+          if (result === false) { break; } // break early?
         }
 
       }
@@ -333,7 +347,7 @@ var ooreset = function() {
       // call before event
       var result = this.fire.apply(this, args);
 
-      if (typeof result === "boolean" && result === false) {
+      if (result === false) {
         // abort
         return false;
       }

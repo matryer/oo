@@ -46,10 +46,11 @@ You are free to copy the source and host it on your own servers if you leave the
 
 ### Change log
 
-  * v1.2 - Added events
-  * v1.1 - Added [special class methods](#special-class-methods)
-  * v1.0 - Initial release
-  * v0.2 - BETA release
+  * v1.2.1 - Added class-wide events
+  * v1.2   - Added events
+  * v1.1   - Added [special class methods](#special-class-methods)
+  * v1.0   - Initial release
+  * v0.2   - BETA release
 
 ## API Documentation
 

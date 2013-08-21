@@ -154,6 +154,29 @@ buster.testCase("Events", {
 
   },
 
+  "Cancelling by returning false": function(){
+
+    var o = new MyTestClass();
+
+    var callCount = 0;
+    o.on("something", function(){ callCount++; });
+    o.on("something", function(){ callCount++; });
+    o.on("something", function(){ callCount++; });
+    o.on("something", function(){ callCount++; });
+    o.on("something", function(){ callCount++; return false; });
+    o.on("something", function(){ callCount++; });
+    o.on("something", function(){ callCount++; });
+    o.on("something", function(){ callCount++; });
+    o.on("something", function(){ callCount++; });
+    o.on("something", function(){ callCount++; });
+
+    // fire the event
+    o.fire("something");
+
+    assert.equals(callCount, 5, "callCount");
+
+  },
+
   "Testing multiple callbacks": function() {
 
     var callbacks = [];
@@ -210,6 +233,39 @@ buster.testCase("Events", {
     assert.equals(1, callbacks[0]);
     assert.equals(3, callbacks[1]);
 
-  }
+  },
+
+  "Class wide events": function(){
+
+    var MyClass = oo.Class("MyClass", oo.Events, {
+      events: ["something"]
+    });
+
+    // bind to the class event
+    var classWideArgs = [];
+    var classWideCallbackCalledCount = 0;
+    var classWideCallbackThis = null;
+    MyClass.on("something", function(){
+      classWideCallbackCalledCount++;
+      classWideCallbackThis = this;
+      classWideArgs.push(arguments);
+    });
+
+    // create two instances
+    var instance1 = new MyClass();
+    var instance2 = new MyClass();
+
+    // fire the event on both of them
+    instance1.something(1, 2, 3);
+    instance2.something(4, 5, 6);
+
+    // make sure the class wide handler was called
+    assert.equals(classWideCallbackCalledCount, 2, "classWideCallbackCalledCount");
+    assert.equals(classWideArgs[0][0], instance1, "classWideArgs[0][0]");
+    assert.equals(classWideArgs[0].length, 4, "classWideArgs[0].length")
+    assert.equals(classWideArgs[1][0], instance2, "classWideArgs[1][0]");
+    assert.equals(classWideArgs[1].length, 4, "classWideArgs[1].length")
+
+  } 
 
 });
