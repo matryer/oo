@@ -46,7 +46,7 @@ You are free to copy the source and host it on your own servers if you leave the
 
 ### Change log
 
-  * v1.3 - Added scoped events
+  * v1.3 - Added scoped events and property defaults
   * v1.2.2 - Added properties
   * v1.2.1 - Added class-wide events
   * v1.2   - Added events
@@ -70,13 +70,15 @@ You can do this:
 
     var MyClass = oo.Class("MyClass", oo.Events, oo.Properties, {
 
-      properties: ["name"]
+      properties: {"name": "Default name"}
 
     });
 
 ... instead of this:
 
-    var MyClass = function(){};
+    var MyClass = function(){
+      this.name = "Default name";
+    };
 
     MyClass.prototype.getName = function() {
       return this.name;
@@ -256,6 +258,17 @@ Four methods will be added to your objects;
   * `setAge(age)`
 
 These methods allow you easily get and set the appropriate values.
+
+### Defaults
+
+You can specify default values by using an object instead of an array:
+
+    {
+      properties: {
+        "name": "Mat",
+        "age": 30
+      }
+    }
 
 ### Read and write only
 
