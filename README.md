@@ -76,7 +76,7 @@ You can do this:
 ... instead of this:
 
     var MyClass = function(){};
-    
+
     MyClass.prototype.getName = function() {
       return this.name;
     }
@@ -139,7 +139,7 @@ Methods beginning with `$` will not become instance methods (i.e. bound to insta
 The special `init` function will be called each time a new instance is created, and allows you to perform initialization activities for the class.
 
     var MyClass = oo.Class("MyClass", {
-    
+
       init: function() {
         // set stuff up
       }
@@ -159,12 +159,12 @@ To see if an object is an `oo.Class`, just do this:
 The `.$class` field contains the class that was used to create the object.
 
     var MyClass1 = oo.Class("MyClass1", {
-      numberOnOne: function(){ return 1; } 
+      numberOnOne: function(){ return 1; }
     });
     var MyClass2 = oo.Class("MyClass2", {
-      numberOnTwo: function(){ return 2; } 
+      numberOnTwo: function(){ return 2; }
     });
-    
+
     function getNumber(object) {
       switch (object.$class) {
         case MyClass1:
@@ -280,11 +280,11 @@ The signature for the property events looks like this:
   * `{old}` is the old value
   * `{new}` is the new value
 
-You may also listen to the generic `propertyChanged` event (and `before:propertyChanged`) to be notified of any property changes.  
+You may also listen to the generic `propertyChanged` event (and `before:propertyChanged`) to be notified of any property changes.
 
 The signature for the generic `propertyChanged` event is:
 
-    propertyChanged({event}, {old}, {new}) 
+    propertyChanged({event}, {old}, {new})
 
   * `{event}` is the name of the event
   * `{old}` is the old value
@@ -340,7 +340,7 @@ You can change this by overriding the `getPropertyInternalName` method:
       getPropertyInternalName: function(name) {
         return "internal_" + name;
       }
-    } 
+    }
 
 ## Events
 
@@ -388,6 +388,20 @@ or from inside the object:
     something: function(){
       this.fire("event-name", arg1, arg2, arg3)
     }
+
+##### Using scoped callbacks `fireWith`
+
+You can fire an event with a map of additional callbacks that will
+only be called for this particular firing of the event.
+
+To do so, use the `fireWith` method that looks like this:
+
+    // usage:
+    object.fireWith(eventName, callbacks [, arguments])
+
+The `callbacks` is a map of event names to single functions that will be
+called (if appropriate) only for this firing of the event, and not for
+subsequent ones.
 
 #### Automagic _before_ events using `withEvent` method
 
@@ -547,7 +561,7 @@ One class may have multiple base classes, but each base class will share the ins
         return "Hello from Base 1";
       }
     });
-    
+
     var BaseClass2 = oo.Class("BaseClass2", {
       theMethod: function() {
         return "BASE 2 method working with " + this.name;
@@ -556,7 +570,7 @@ One class may have multiple base classes, but each base class will share the ins
         return "Hello from Base 2";
       }
     });
-    
+
     var ChildClass = oo.Class("ChildClass", BaseClass1, BaseClass2, {
       theMethod: function() {
         return "CHILD method working with " + this.name;
@@ -572,13 +586,13 @@ One class may have multiple base classes, but each base class will share the ins
 
     alert( i.helloFromBase1() );
     // alerts "Hello from Base 1"
-    
+
     alert( i.helloFromBase2() );
     // alerts "Hello from Base 2"
 
     alert( i.BaseClass1.theMethod() );
     // alerts "BASE 1 method working with Mat"
-    
+
     alert( i.BaseClass2.theMethod() );
     // alerts "BASE 2 method working with Mat"
 
@@ -646,7 +660,7 @@ The `oobind` method allows you to bind context (and arguments) to functions.  Th
 NOTE: Newer editions of the language have their own [bind method](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind) that will eventually replace `oobind`.  It works, however, in the same way.
 
 ## Licence
-    
+
 Copyright (c) 2013 Mat Ryer
 
 Please consider promoting this project if you find it useful.
@@ -655,4 +669,4 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 The above copyright notice and this permission notice shall be included in all copies or     substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,     INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR     PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE     FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR     OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER     DEALINGS IN THE SOFTWARE.    
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,     INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR     PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE     FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR     OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER     DEALINGS IN THE SOFTWARE.
