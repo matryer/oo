@@ -46,6 +46,7 @@ You are free to copy the source and host it on your own servers if you leave the
 
 ### Change log
 
+  * v1.3 - Added scoped events
   * v1.2.2 - Added properties
   * v1.2.1 - Added class-wide events
   * v1.2   - Added events
