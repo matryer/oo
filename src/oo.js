@@ -437,22 +437,43 @@ var ooreset = function() {
 
     $afterClassDefined: function(klass){
 
-      if (klass.prototype.properties && klass.prototype.properties.length) {
+      if (klass.prototype.properties && typeof klass.prototype.properties.length != "undefined") {
+        // array
         for (var prop in klass.prototype.properties) {
           // add this property
-          oo.Properties.$addProperty(klass.prototype, klass.prototype.properties[prop], true, true);
+          oo.Properties.$addProperty(klass.prototype, klass.prototype.properties[prop], true, true, null);
+        }
+      } else if (klass.prototype.properties) {
+        // object
+        for (var prop in klass.prototype.properties) {
+          // add this property
+          oo.Properties.$addProperty(klass.prototype, prop, true, true, klass.prototype.properties[prop]);
         }
       }
-      if (klass.prototype.getters && klass.prototype.getters.length) {
+      if (klass.prototype.getters && typeof klass.prototype.getters.length != "undefined") {
+        // array
         for (var prop in klass.prototype.getters) {
           // add this property
-          oo.Properties.$addProperty(klass.prototype, klass.prototype.getters[prop], true, false);
+          oo.Properties.$addProperty(klass.prototype, klass.prototype.getters[prop], true, false, null);
+        }
+      } else if (klass.prototype.getters) {
+        // object
+        for (var prop in klass.prototype.getters) {
+          // add this property
+          oo.Properties.$addProperty(klass.prototype, prop, true, false, klass.prototype.getters[prop]);
         }
       }
-      if (klass.prototype.setters && klass.prototype.setters.length) {
+      if (klass.prototype.setters && typeof klass.prototype.setters.length != "undefined") {
+        // array
         for (var prop in klass.prototype.setters) {
           // add this property
-          oo.Properties.$addProperty(klass.prototype, klass.prototype.setters[prop], false, true);
+          oo.Properties.$addProperty(klass.prototype, klass.prototype.setters[prop], false, true, null);
+        }
+      } else if (klass.prototype.setters) {
+        // object
+        for (var prop in klass.prototype.setters) {
+          // add this property
+          oo.Properties.$addProperty(klass.prototype, prop, false, true, klass.prototype.setters[prop]);
         }
       }
 
@@ -483,7 +504,8 @@ var ooreset = function() {
   // {name} - The name of the property
   // {getter} - true|false or name of getter function
   // {setter} - true|false or name of setter function
-  oo.Properties.$addProperty = function(target, name, getter, setter) {
+  // {optionalDefault} - (optional) The starting value of the property.
+  oo.Properties.$addProperty = function(target, name, getter, setter, optionalDefault) {
 
     // events?
     if (target.on) {
@@ -532,7 +554,7 @@ var ooreset = function() {
     };
 
     // initialise the space to hold the property value
-    target[internalName] = null;
+    target[internalName] = optionalDefault || null;
 
     // setter
     if (setter !== false) {
