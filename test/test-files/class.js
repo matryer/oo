@@ -152,17 +152,38 @@ buster.testCase("Class", {
   "oo.Class base class; calling base methods": function(){
 
     var BaseClass = oo.Class("BaseClass", {
-      getName: function(){ return "base: " + this.name; }
+      getName: function(){
+        return "base: " + this.name;
+      }
     });
 
     var ChildClass = oo.Class("ChildClass", BaseClass, {
-      getName: function(){ return this.BaseClass.getName(); }
+      getName: function(){
+       return this.BaseClass.getName(); }
     });
 
     var childInstance = new ChildClass();
     childInstance.name = "Mat";
 
     assert.equals(childInstance.getName(), "base: Mat");
+
+  },
+
+  "oo.Class base class; child methods shouldn't overwrite base ones in the base class": function(){
+
+    var BaseClass = oo.Class("BaseClass", {
+      getNickname: function(){ return this.getName(); },
+      getName: function(){ return "Unknown"; }
+    });
+
+    var ChildClass = oo.Class("ChildClass", BaseClass, {
+      getName: function(){ return "Mat"; }
+    });
+
+    var c = new ChildClass();
+    var b = new BaseClass();
+
+    assert.equals(b.getNickname(), "Unknown", "Child classes shouldn't overwrite Base functions.");
 
   }
 

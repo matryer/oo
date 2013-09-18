@@ -55,7 +55,7 @@ var ooreset = function() {
   var oo = {
 
     // the oo version number
-    version: "1.3",
+    version: "1.3.1",
 
     // oo.classes holds an array of all known class names.
     classes: [],
@@ -108,15 +108,22 @@ var ooreset = function() {
       // initialiseBases ensures all base methods are bound to
       // the correct context to allow the myInstance.BaseClass.baseMethod() format.
       klass.prototype.$initialiseBases = function(){
+
         for (var baseName in this.$class.$bases) {
-          var basePrototype = this.$class.$bases[baseName];
-          for (var baseProperty in basePrototype.prototype) {
-            if (typeof basePrototype.prototype[baseProperty] == "function") {
-              if (baseProperty.substr(0, 1) != "$") {
-                basePrototype.prototype[baseProperty] = basePrototype.prototype[baseProperty].bind(this);
-              }
+
+          // make an object to hold base methods
+          this[baseName] = {};
+
+          // get the base class
+          basePrototype = this.$class.$bases[baseName].prototype;
+
+          // copy all functions across
+          for (var baseProperty in basePrototype) {
+            if (typeof basePrototype[baseProperty] === "function") {
+              this[baseName][baseProperty] = basePrototype[baseProperty].bind(this);
             }
           }
+
         }
 
       };
@@ -141,14 +148,11 @@ var ooreset = function() {
           // is this a base class?
           if (item.$isClass) {
 
-            // add it to the bases
+            // copy the methods to the $bases object
             klass.$bases[item.$className] = item;
 
             // write the base properties by default
             ooextend(item.prototype, klass.prototype);
-
-            // save the class.BaseClass object
-            klass.prototype[item.$className] = item.prototype;
 
           } else if (typeof item == "object") {
 
@@ -641,7 +645,7 @@ var oowarn = function(msg) {
 var ooextend = function(source, destination) {
 
   // is this an array?
-  if (typeof source.length != "undefined" && typeof destination.length != "undefined") {
+  if (typeof source.length !== "undefined" && typeof destination.length !== "undefined") {
     // array
     for (var s in source) {
       destination.push(source[s]);
@@ -649,7 +653,8 @@ var ooextend = function(source, destination) {
   } else {
     // objects
     for (var s in source) {
-      destination[s] = source[s];
+      if (source.hasOwnProperty(s))
+        destination[s] = source[s];
     }
   }
 
