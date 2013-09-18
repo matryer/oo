@@ -337,6 +337,34 @@ buster.testCase("Events", {
 
     assert.equals(1, callbackCallCount, "Callback should not get called again.")
 
+  },
+
+  "Inherited events": function(){
+
+    var BaseClass = oo.Class("BaseClass", oo.Events, {
+      events: ["one", "two", "three"]
+    });
+
+    var ChildClass = oo.Class("ChildClass", BaseClass, {});
+
+    var childInstance = new ChildClass();
+
+    var calls = [];
+    childInstance.on("one", function(){
+      calls.push(arguments);
+    });
+    childInstance.on("two", function(){
+      calls.push(arguments);
+    });
+    childInstance.on("three", function(){
+      calls.push(arguments);
+    });
+
+    // fire all events
+    childInstance.one().two().three();
+
+    assert.equals(calls.length, 3);
+
   }
 
 });

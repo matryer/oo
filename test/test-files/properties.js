@@ -139,6 +139,39 @@ buster.testCase("Properties", {
 
   },
 
+  "inherited properties and events": function(){
+
+    var BaseClass = oo.Class("BaseClass", oo.Events, oo.Properties, {
+      properties: ["one", "two", "three"],
+      events: ["eventOne", "eventTwo", "eventThree"]
+    });
+
+    var ChildClass = oo.Class("ChildClass", BaseClass, {});
+    var childInstance = new ChildClass();
+
+    var calls = [];
+    childInstance.on("eventOne", function(){
+      calls.push(arguments);
+    });
+    childInstance.on("eventTwo", function(){
+      calls.push(arguments);
+    });
+    childInstance.on("eventThree", function(){
+      calls.push(arguments);
+    });
+
+    childInstance.setOne(1).setTwo(2).setThree(3);
+    assert.equals(childInstance.one(), 1)
+    assert.equals(childInstance.two(), 2)
+    assert.equals(childInstance.three(), 3)
+
+    // fire all events
+    childInstance.eventOne().eventTwo().eventThree();
+
+    assert.equals(calls.length, 3);
+
+  },
+
   "defaults": function(){
 
     var ClassWithDefaults = oo.Class("ClassWithDefaults", oo.Properties, {
@@ -166,6 +199,22 @@ buster.testCase("Properties", {
     assert.equals(i.name(), "Mat");
     assert.equals(i.age(), 30);
     assert.equals(i.something(), true);
+
+  },
+
+  "inherited properties": function(){
+
+    var BaseClass = oo.Class("BaseClass", oo.Properties, {
+      properties: ["one", "two", "three"]
+    });
+
+    var ChildClass = oo.Class("ChildClass", BaseClass, {});
+
+    var childInstance = new ChildClass();
+    childInstance.setOne(1).setTwo(2).setThree(3);
+    assert.equals(childInstance.one(), 1)
+    assert.equals(childInstance.two(), 2)
+    assert.equals(childInstance.three(), 3)
 
   }
 

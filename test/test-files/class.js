@@ -93,18 +93,32 @@ buster.testCase("Class", {
   "oo.Class base class": function(){
 
     var BaseClass = oo.Class("BaseClass", {
-      baseMethodGetName: function(){ return this.name; }
+      baseMethodGetName: function(){ return this.name; },
+      getNumber: function(){ return 1; },
+      set: function(k, v){
+        this[k] = v;
+      }
     });
 
     var ChildClass = oo.Class("ChildClass", BaseClass, {
-      childMethodGetName: function(){ return this.name; }
+      childMethodGetName: function(){ return this.name; },
+      getChildNumber: function(){ return 2; }
     });
+
+    var baseInstance = new BaseClass();
+    baseInstance.name = "Ryon";
+    assert.equals(baseInstance.getNumber(), 1);
+
+    baseInstance.set("name", "Ryan");
+    assert.equals(baseInstance.name, "Ryan");
 
     var childInstance = new ChildClass();
     childInstance.name = "Mat";
 
     assert.equals(childInstance.childMethodGetName(), "Mat");
     assert.equals(childInstance.baseMethodGetName(), "Mat");
+    assert.equals(childInstance.getNumber(), 1);
+    assert.equals(childInstance.getChildNumber(), 2);
 
   },
 
