@@ -20,11 +20,20 @@
 
 In your HTML page, just include a `script` tag for the appropriate version hosted on GitHub:
 
+#### Host it yourself (recommended)
+
+You are free to [Download one of the official releases of oo](https://github.com/stretchr/oo/releases) and host it on your own servers if you leave the comments in place.  See the [licence](https://github.com/stretchr/oo#licence) for more information.
+
 #### Latest edge version
 
     <script src="https://raw.github.com/stretchr/oo/master/src/oo.js"></script>
 
 #### Specific releases
+
+##### v1.3.1
+
+  * `<script src="https://raw.github.com/stretchr/oo/v1.3.1/src/oo.js"></script>`
+  * Minified (4,834 bytes): `<script src="https://raw.github.com/stretchr/oo/v1.3.1/src/oo-min.js"></script>`
 
 ##### v1.2
 
@@ -40,12 +49,9 @@ In your HTML page, just include a `script` tag for the appropriate version hoste
 
 If you want the features from a specific branch, navigate to the branch on https://github.com/stretchr/oo/branches and look for the raw file `/src/oo.js`, and set that as your `src` attribute.
 
-#### Host it yourself (recommended)
-
-You are free to copy the source and host it on your own servers if you leave the comments in place.  See the [licence](https://github.com/stretchr/oo#licence) for more information.
-
 ### Change log
 
+  * v1.3.1 - BUGFIX: Base class methods get confused context when inherited
   * v1.3 - Added scoped events and property defaults
   * v1.2.2 - Added properties
   * v1.2.1 - Added class-wide events
