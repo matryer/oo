@@ -141,13 +141,17 @@ buster.testCase("Properties", {
 
   "inherited properties and events": function(){
 
-    var BaseClass = oo.Class("BaseClass", oo.Events, oo.Properties, {
+    var namespace = {};
+
+    namespace.BaseClass = oo.Class("namespace.BaseClass", oo.Events, oo.Properties, {
       properties: ["one", "two", "three"],
       events: ["eventOne", "eventTwo", "eventThree"]
     });
 
-    var ChildClass = oo.Class("ChildClass", BaseClass, {});
-    var childInstance = new ChildClass();
+    namespace.ChildClass = oo.Class("namespace.ChildClass", namespace.BaseClass, {
+
+    });
+    var childInstance = new namespace.ChildClass();
 
     var calls = [];
     childInstance.on("eventOne", function(){
