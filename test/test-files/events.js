@@ -1,6 +1,6 @@
 var MyTestClass;
 buster.testCase("Events", {
-  
+
   setUp: function(){
 
     oo = ooreset();
@@ -52,7 +52,7 @@ buster.testCase("Events", {
     myObj.fire("something", 1, 2, 3);
     assert.equals(1, callbackCount, "Callback not get called again");
 
-    // withEvent should call the beforeevent and afterevent 
+    // withEvent should call the beforeevent and afterevent
     // versions of the event name.
     var before = false, after = false, block = false;
 
@@ -77,7 +77,7 @@ buster.testCase("Events", {
     var MyClass = oo.Class("MyClass", oo.Events, {});
     var myObj = new MyClass();
 
-    // withEvent should call the beforeevent and afterevent 
+    // withEvent should call the beforeevent and afterevent
     // versions of the event name.
     var before = false, after = false, block = false;
     var beforeArgs = [], afterArgs = [];
@@ -107,7 +107,7 @@ buster.testCase("Events", {
     var MyClass = oo.Class("MyClass", oo.Events, {});
     var myObj = new MyClass();
 
-    // withEvent should call the beforeevent and afterevent 
+    // withEvent should call the beforeevent and afterevent
     // versions of the event name.
     var before = false, after = false, block = false;
     var beforeArgs = [], afterArgs = [];
@@ -156,7 +156,7 @@ buster.testCase("Events", {
   "Using shortcut method": function(){
 
     var o = new MyTestClass();
-    
+
     var callbackCallCount = 0;
     var callbackThis = null;
     var callbackArguments = null;
@@ -165,7 +165,7 @@ buster.testCase("Events", {
       callbackThis = this;
       callbackArguments = arguments;
     };
-    
+
     // add a callback
     assert.equals(o.success(callback), o, "Event shortcut methods should chain.")
 
@@ -296,6 +296,47 @@ buster.testCase("Events", {
     assert.equals(classWideArgs[1][0], instance2, "classWideArgs[1][0]");
     assert.equals(classWideArgs[1].length, 4, "classWideArgs[1].length")
 
-  } 
+  },
+
+  "Scope events": function(){
+
+    var MyClass = oo.Class("MyClass", oo.Events, {
+      events: ["something"]
+    });
+
+    var callbackCallCount = 0;
+    var callbackThis = null;
+    var callbackArguments = null;
+    var callback = function(){
+      callbackCallCount++;
+      callbackThis = this;
+      callbackArguments = arguments;
+    };
+
+    var i = new MyClass();
+
+    // fire event
+    i.fire("something", 1, 2, 3);
+
+    assert.equals(0, callbackCallCount, "Callback should NOT have been called")
+
+    i.fireWith("something", {
+      "something": callback
+    }, 1, 2, 3);
+
+    assert.equals(1, callbackCallCount, "Callback should have been called")
+    assert.equals(i, callbackThis, "Context of event handler should be the object itself.")
+    assert.equals(3, callbackArguments.length, "Arguments should be sent")
+    assert.equals(1, callbackArguments[0], "Argument")
+    assert.equals(2, callbackArguments[1], "Argument")
+    assert.equals(3, callbackArguments[2], "Argument")
+
+    // trigger the event again - should NOT fire the
+    // scoped one.
+    i.fire("something", 1, 2, 3);
+
+    assert.equals(1, callbackCallCount, "Callback should not get called again.")
+
+  }
 
 });

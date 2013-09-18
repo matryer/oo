@@ -1,9 +1,9 @@
 /*
 
   oo
-  v1.2.2
+  v1.3
   github.com/stretchr/oo
-  
+
   The worlds simplest JavaScript OO implementation.
   For if you just need cool classes, and nothing else.
 
@@ -16,7 +16,7 @@
   Usage:
 
       var GreeterClass = oo.Class("GreeterClass", oo.Events, oo.Properties, {
-      
+
         properties: ["name"],
 
         init: function(name) {
@@ -55,7 +55,7 @@ var ooreset = function() {
   var oo = {
 
     // the oo version number
-    version: "1.2.2",
+    version: "1.3",
 
     // oo.classes holds an array of all known class names.
     classes: [],
@@ -140,7 +140,7 @@ var ooreset = function() {
 
           // is this a base class?
           if (item.$isClass) {
-            
+
             // add it to the bases
             klass.$bases[item.$className] = item;
 
@@ -210,7 +210,7 @@ var ooreset = function() {
       // set the class name
       oo.classes[oo.classes.length] = klass.$className = className;
 
-      // add the class to the classmap 
+      // add the class to the classmap
       oo.classesmap[className] = klass;
 
       // call any $afterClassDefined functions
@@ -243,13 +243,13 @@ var ooreset = function() {
 
           // just one argument?
           if (arguments.length === 1 && typeof arguments[0] == "function") {
-            
+
             // add callback
             var args = [$event, arguments[0]];
             this.on.apply(this, args);
 
           } else {
-            
+
             // fire event
             var args = [$event]; ooextend(arguments, args);
             this.fire.apply(this, args);
@@ -265,10 +265,11 @@ var ooreset = function() {
     },
 
     $afterClassDefined: function(klass){
-      
+
       // add events to the class itself
       klass.on = oo.Events.on;
       klass.fire = oo.Events.fire;
+      klass.fireWith = oo.Events.fireWith;
       klass.removeCallback = oo.Events.removeCallback;
 
       // are there any explicit events specified in the
@@ -299,12 +300,18 @@ var ooreset = function() {
 
     // fire calls all callbacks that are registered with
     // the specified event.
-    fire: function(event) {
+    //
+    // Additionally, matching callbacks inside scopedCallbacks
+    // will also be triggered.
+    //
+    // Any arguments after the scopedCallbacks will be passed to
+    // each callback.
+    fireWith: function(event, scopedCallbacks /*, arguments... */) {
 
-      // get args minus the event name
+      // get args minus the event name and scopedCallbacks
       var args = [];
       var classArgs = [event, this];
-      for (var i = 1; i < arguments.length; i++) {
+      for (var i = 2; i < arguments.length; i++) {
         args.push(arguments[i]);
         classArgs.push(arguments[i]);
       }
@@ -314,15 +321,40 @@ var ooreset = function() {
         this.$class.fire.apply(this.$class, classArgs);
       }
 
-      // handle events on this instance
+      // collect all callbacks
+      var callbacks = [];
       if (this.ooevents && this.ooevents[event]) {
+        callbacks = this.ooevents[event];
+      }
+      // add the scoped callback (if there is one)
+      if (scopedCallbacks && scopedCallbacks[event]) {
+        callbacks.push(scopedCallbacks[event]);
+      }
+
+      // handle events on this instance
+      if (callbacks.length > 0) {
         // call each callback
-        for (var i in this.ooevents[event]) {
-          var func = this.ooevents[event][i];
+        for (var i in callbacks) {
+          var func = callbacks[i];
           var result = func.apply(this, args);
           if (result === false) { return false; } // break early?
         }
       }
+
+    },
+
+    // fire calls all callbacks that are registered with
+    // the specified event.
+    fire: function(event /*, arguments... */) {
+
+      // get the args
+      var args = [event, null];
+
+      for (var i = 1; i < arguments.length; i++) {
+        args.push(arguments[i]);
+      }
+
+      return this.fireWith.apply(this, args);
 
     },
 
@@ -405,22 +437,43 @@ var ooreset = function() {
 
     $afterClassDefined: function(klass){
 
-      if (klass.prototype.properties && klass.prototype.properties.length) {
+      if (klass.prototype.properties && typeof klass.prototype.properties.length != "undefined") {
+        // array
         for (var prop in klass.prototype.properties) {
           // add this property
-          oo.Properties.$addProperty(klass.prototype, klass.prototype.properties[prop], true, true);
+          oo.Properties.$addProperty(klass.prototype, klass.prototype.properties[prop], true, true, null);
+        }
+      } else if (klass.prototype.properties) {
+        // object
+        for (var prop in klass.prototype.properties) {
+          // add this property
+          oo.Properties.$addProperty(klass.prototype, prop, true, true, klass.prototype.properties[prop]);
         }
       }
-      if (klass.prototype.getters && klass.prototype.getters.length) {
+      if (klass.prototype.getters && typeof klass.prototype.getters.length != "undefined") {
+        // array
         for (var prop in klass.prototype.getters) {
           // add this property
-          oo.Properties.$addProperty(klass.prototype, klass.prototype.getters[prop], true, false);
+          oo.Properties.$addProperty(klass.prototype, klass.prototype.getters[prop], true, false, null);
+        }
+      } else if (klass.prototype.getters) {
+        // object
+        for (var prop in klass.prototype.getters) {
+          // add this property
+          oo.Properties.$addProperty(klass.prototype, prop, true, false, klass.prototype.getters[prop]);
         }
       }
-      if (klass.prototype.setters && klass.prototype.setters.length) {
+      if (klass.prototype.setters && typeof klass.prototype.setters.length != "undefined") {
+        // array
         for (var prop in klass.prototype.setters) {
           // add this property
-          oo.Properties.$addProperty(klass.prototype, klass.prototype.setters[prop], false, true);
+          oo.Properties.$addProperty(klass.prototype, klass.prototype.setters[prop], false, true, null);
+        }
+      } else if (klass.prototype.setters) {
+        // object
+        for (var prop in klass.prototype.setters) {
+          // add this property
+          oo.Properties.$addProperty(klass.prototype, prop, false, true, klass.prototype.setters[prop]);
         }
       }
 
@@ -451,7 +504,8 @@ var ooreset = function() {
   // {name} - The name of the property
   // {getter} - true|false or name of getter function
   // {setter} - true|false or name of setter function
-  oo.Properties.$addProperty = function(target, name, getter, setter) {
+  // {optionalDefault} - (optional) The starting value of the property.
+  oo.Properties.$addProperty = function(target, name, getter, setter, optionalDefault) {
 
     // events?
     if (target.on) {
@@ -500,7 +554,7 @@ var ooreset = function() {
     };
 
     // initialise the space to hold the property value
-    target[internalName] = null;
+    target[internalName] = optionalDefault || null;
 
     // setter
     if (setter !== false) {
@@ -549,7 +603,7 @@ var ooreset = function() {
     }
   });
 
-  // DuplicateClassNameException 
+  // DuplicateClassNameException
   oo.DuplicateClassNameException = oo.Class("oo.DuplicateClassNameException", oo.Exception, {
     init: function(className) {
       this["oo.Exception"].init("Cannot define a class because '" + className + "' already exists, consider namespacing your class names; e.g. YourCompany." + className);
@@ -614,27 +668,27 @@ var oo = ooreset();
  */
 var oobind = function() {
 
-        var 
-        
+        var
+
                 _func = arguments[0] || null,
                 _obj = arguments[1] || this,
                 _args = [],
-                
-                i = 2, 
+
+                i = 2,
                 l = arguments.length,
-                
+
                 bound
-                
+
         ;
-        
+
         // add arguments
         for (; i<l; i++) {
                 _args.push(arguments[i]);
         }
-        
+
         // return a new function that wraps everything up
         bound = function() {
-                
+
                 // start an array to get the args
                 var theArgs = [];
                 var i = 0;
@@ -643,7 +697,7 @@ var oobind = function() {
                 for (i = 0, l = _args.length; i < l; i++) {
                         theArgs.push(_args[i]);
                 }
-                
+
                 // add any real arguments passed
                 for (i = 0, l = arguments.length; i < l; i++) {
                         theArgs.push(arguments[i]);
@@ -653,30 +707,30 @@ var oobind = function() {
                 return _func.apply(_obj, theArgs);
 
         };
-        
+
         bound.func = _func;
         bound.context = _obj;
         bound.args = _args;
-        
+
         return bound;
-        
+
 };
 
 /*
  *  instance shortcut version...
  */
 Function.prototype.bind = function(){
-        
+
         var theArgs = [], i = 0, l = arguments.length;
-        
+
         // add the function
         theArgs.push(this);
-        
+
         // add any real arguments passed
         for (; i < l; i++) {
                 theArgs.push(arguments[i]);
         }
-        
+
         return oobind.apply(window, theArgs);
-        
+
 };

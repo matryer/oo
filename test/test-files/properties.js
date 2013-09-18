@@ -1,6 +1,6 @@
 var MyTestClass;
 buster.testCase("Properties", {
-  
+
   setUp: function(){
 
     oo = ooreset();
@@ -8,8 +8,8 @@ buster.testCase("Properties", {
     MyTestClass = oo.Class("MyTestClass", oo.Events, oo.Properties, {
 
       properties: ["name", "age"],
-      setters: ["style"],
-      getters: ["description"],
+      setters: {"style":null},
+      getters: {"description":null},
 
       // overridden handler
       setAge: function(age) {
@@ -136,6 +136,36 @@ buster.testCase("Properties", {
     assert.equals(propChangedName, "name");
     assert.equals(propChangedOld, "Tyler");
     assert.equals(propChangedNew, "Mat");
+
+  },
+
+  "defaults": function(){
+
+    var ClassWithDefaults = oo.Class("ClassWithDefaults", oo.Properties, {
+
+      properties: {
+        "name": "Mat",
+        "age": 30
+      },
+
+      getters: {
+        "something": true
+      },
+
+      setters: {
+        "else": 90210
+      }
+
+    });
+
+    var i = new ClassWithDefaults();
+    assert.equals(i._name, "Mat");
+    assert.equals(i._age, 30);
+    assert.equals(i._something, true);
+    assert.equals(i._else, 90210);
+    assert.equals(i.name(), "Mat");
+    assert.equals(i.age(), 30);
+    assert.equals(i.something(), true);
 
   }
 
