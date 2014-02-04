@@ -1,7 +1,7 @@
 /*
 
   oo
-  v1.3
+  v1.3.2
   github.com/stretchr/oo
 
   The worlds simplest JavaScript OO implementation.
@@ -55,7 +55,7 @@ var ooreset = function() {
   var oo = {
 
     // the oo version number
-    version: "1.3.1",
+    version: "1.3.2",
 
     // oo.classes holds an array of all known class names.
     classes: [],
@@ -147,6 +147,12 @@ var ooreset = function() {
 
           // is this a base class?
           if (item.$isClass) {
+
+            // inherit all bases of this base
+            for (var i in item.$bases) {
+              var base = item.$bases[i];
+              klass.$bases[base.$className] = base;
+            }
 
             // copy the methods to the $bases object
             klass.$bases[item.$className] = item;

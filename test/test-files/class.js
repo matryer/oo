@@ -90,7 +90,7 @@ buster.testCase("Class", {
 
   },
 
-  "oo.Class base class": function(){
+  "oo.Class base classes": function(){
 
     var BaseClass = oo.Class("BaseClass", {
       init: function(){
@@ -111,7 +111,7 @@ buster.testCase("Class", {
       getChildNumber: function(){ return 2; }
     });
 
-    var ChildClass2 = oo.Class("ChildClass2", BaseClass, {
+    var ChildClass2 = oo.Class("ChildClass2", ChildClass, {
       init: function(){
         this.type = "child2";
       },
