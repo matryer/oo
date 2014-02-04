@@ -135,6 +135,7 @@ buster.testCase("Class", {
     assert.equals(childInstance.baseMethodGetName(), "Mat");
     assert.equals(childInstance.getNumber(), 1);
     assert.equals(childInstance.getChildNumber(), 2);
+    assert.equals(childInstance.BaseClass.getNumber(), 1);
 
 
     var childInstance2 = new ChildClass2();
@@ -145,6 +146,7 @@ buster.testCase("Class", {
     assert.equals(childInstance2.baseMethodGetName(), "Mat");
     assert.equals(childInstance2.getNumber(), 1);
     assert.equals(childInstance2.getChildNumber(), 3);
+    assert.equals(childInstance2.BaseClass.getNumber(), 1);
 
   },
 
